@@ -1,0 +1,14 @@
+{
+  "extends": "solhint:recommended",
+  "rules": {
+    "mark-callable-contracts": "off",
+    "not-rely-on-time": "off",
+    "reason-string": ["warn", { "maxLength": 64 }],
+    "compiler-version": ["off", "^0.8.4"],
+    "func-visibility": ["warn", { "ignoreConstructors": true }],
+    "private-vars-leading-underscore": "warn",
+    "func-param-name-mixedcase": "warn",
+    "modifier-name-mixedcase": "warn",
+    "ordering": "warn"
+  }
+}
