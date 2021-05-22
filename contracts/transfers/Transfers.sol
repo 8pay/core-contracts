@@ -4,6 +4,7 @@ pragma solidity 0.8.4;
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import { Initializable } from "@openzeppelin/contracts/proxy/utils/Initializable.sol";
+import { Address } from "@openzeppelin/contracts/utils/Address.sol";
 import { AccessControl } from "../access/AccessControl.sol";
 import { Arrays } from "../libraries/Arrays.sol";
 import { ITransfers } from "../interfaces/ITransfers.sol";
@@ -23,6 +24,7 @@ import { IFeeProvider } from "../interfaces/IFeeProvider.sol";
  * the fee collector address.
  */
 contract Transfers is ITransfers, Initializable, AccessControl {
+    using Address for address payable;
     using SafeERC20 for IERC20;
 
     /// @dev Reserved memory slots
@@ -308,7 +310,7 @@ contract Transfers is ITransfers, Initializable, AccessControl {
         require(amounts.length == receivers.length, "Transfers: parameters length mismatch");
 
         if (msg.value != Arrays.sum(amounts)) {
-            payable(msg.sender).transfer(msg.value);
+            payable(msg.sender).sendValue(msg.value);
 
             emit TransferFailed(ETH_TOKEN, sender, receivers, amounts, paymentType, metadata);
 
@@ -320,11 +322,11 @@ contract Transfers is ITransfers, Initializable, AccessControl {
         for (uint256 i = 0; i < receivers.length; i++) {
             uint256 netAmount = amounts[i] - _calculateFee(amounts[i], feePercentage);
 
-            payable(receivers[i]).transfer(netAmount);
+            payable(receivers[i]).sendValue(netAmount);
         }
 
         if (totalFee != 0) {
-            feeCollector.transfer(totalFee);
+            feeCollector.sendValue(totalFee);
         }
 
         emit TransferSuccessful(
