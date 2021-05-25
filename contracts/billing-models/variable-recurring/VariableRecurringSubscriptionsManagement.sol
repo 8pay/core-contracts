@@ -110,7 +110,7 @@ contract VariableRecurringSubscriptionsManagement is VariableRecurringConstants,
      * @dev Performs a charge on the given subscriptions.
      *
      * The provided amounts must not exceed the plan's max amount.
-     * Subscriptions that are invalid or where the current cycle is not over yet.
+     * Skips subscriptions that are invalid or where the current cycle is not over yet.
      *
      * Requirements
      *
