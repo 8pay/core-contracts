@@ -40,7 +40,6 @@ contract OnDemandPlans is OnDemandConstants, Initializable {
     ITokensRegistry public tokensRegistry;
 
     uint256 public constant MIN_PERIOD = 600;
-    uint256 public constant MAX_RECEIVERS = 5;
 
     /**
      * @dev Emitted when a plan is created
@@ -52,15 +51,14 @@ contract OnDemandPlans is OnDemandConstants, Initializable {
         uint256 minAllowance,
         address token,
         uint256 period,
-        string category,
-        address[] receivers,
-        uint256[] percentages
+        address receiver,
+        string category
     );
 
     /**
-     * @dev Emitted when the receivers of a plan have been changed
+     * @dev Emitted when the receiver of a plan has been changed
      */
-    event ReceiversChanged(bytes32 indexed planId, address[] receivers, uint256[] percentages);
+    event ReceiverChanged(bytes32 indexed planId, address receiver);
 
     /**
      * @dev Emitted when `permission` is granted to `account`
@@ -113,9 +111,8 @@ contract OnDemandPlans is OnDemandConstants, Initializable {
         uint256 minAllowance,
         address token,
         uint256 period,
-        string memory category,
-        address[] memory receivers,
-        uint256[] memory percentages
+        address receiver,
+        string memory category
     )
         external
     {
@@ -123,8 +120,7 @@ contract OnDemandPlans is OnDemandConstants, Initializable {
         require(period >= MIN_PERIOD, "ODP: period is too short");
         require(bytes(name).length != 0, "ODP: name is empty");
         require(tokensRegistry.isActive(token), "ODP: token is not supported");
-
-        _validateReceivers(receivers, percentages);
+        require(receiver != address(0), "ODP: receiver is the zero address");
 
         bytes32 planId = keccak256(abi.encodePacked(
             PAYMENT_TYPE,
@@ -142,8 +138,7 @@ contract OnDemandPlans is OnDemandConstants, Initializable {
         plansDB.setToken(planId, token);
         plansDB.setPeriod(planId, period);
         plansDB.setMinAllowance(planId, minAllowance);
-        plansDB.setReceivers(planId, receivers);
-        plansDB.setPercentages(planId, percentages);
+        plansDB.setReceiver(planId, receiver);
 
         emit PlanCreated(
             planId,
@@ -152,29 +147,27 @@ contract OnDemandPlans is OnDemandConstants, Initializable {
             minAllowance,
             token,
             period,
-            category,
-            receivers,
-            percentages
+            receiver,
+            category
         );
     }
 
     /**
-     * @dev Changes the receivers of the given plan.
+     * @dev Changes the receiver of the given plan.
      *
      * Requirements:
      *
      * - caller must be admin of the plan
      */
-    function changeReceivers(bytes32 planId, address[] memory receivers, uint256[] memory percentages)
+    function changeReceiver(bytes32 planId, address receiver)
         external
         onlyAdmin(planId)
     {
-        _validateReceivers(receivers, percentages);
+        require(receiver != address(0), "ODP: receiver is the zero address");
 
-        plansDB.setReceivers(planId, receivers);
-        plansDB.setPercentages(planId, percentages);
+        plansDB.setReceiver(planId, receiver);
 
-        emit ReceiversChanged(planId, receivers, percentages);
+        emit ReceiverChanged(planId, receiver);
     }
 
     /**
@@ -234,8 +227,7 @@ contract OnDemandPlans is OnDemandConstants, Initializable {
             uint256 minAllowance,
             uint256 period,
             address token,
-            address[] memory receivers,
-            uint256[] memory percentages
+            address receiver
         )
     {
         require(exists(planId), "ODP: invalid plan id");
@@ -244,8 +236,7 @@ contract OnDemandPlans is OnDemandConstants, Initializable {
         period = plansDB.getPeriod(planId);
         minAllowance = plansDB.getMinAllowance(planId);
         token = tokensRegistry.getLatestAddress(plansDB.getToken(planId));
-        receivers = plansDB.getReceivers(planId);
-        percentages = plansDB.getPercentages(planId);
+        receiver = plansDB.getReceiver(planId);
     }
 
     /**
@@ -271,31 +262,5 @@ contract OnDemandPlans is OnDemandConstants, Initializable {
         returns (bool)
     {
         return plansDB.hasPermission(planId, permission, account);
-    }
-
-
-    /**
-     * @dev Validates receivers and throws if they are invalid.
-     */
-    function _validateReceivers(address[] memory receivers, uint256[] memory percentages)
-        internal
-        pure
-    {
-        require(
-            receivers.length == percentages.length,
-            "ODP: parameters length mismatch"
-        );
-
-        require(
-            receivers.length > 0 && receivers.length <= MAX_RECEIVERS,
-            "ODP: invalid receivers length"
-        );
-
-        for (uint256 i = 0; i < receivers.length; i++){
-            require(receivers[i] != address(0), "ODP: receiver is the zero address");
-            require(percentages[i] != 0, "ODP: percentage is zero");
-        }
-
-        require(Arrays.sum(percentages) == 10000, "ODP: invalid percentages");
     }
 }

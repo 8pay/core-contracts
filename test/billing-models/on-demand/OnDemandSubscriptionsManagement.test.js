@@ -14,16 +14,13 @@ const Permission = require('../../helpers/permissions');
 const Role = require('../../../data/roles');
 
 contract('OnDemandSubscriptionsManagement', accounts => {
-  const [owner, planAdmin, share, subscriber1, subscriber2, operator, feeCollector, random] = accounts;
+  const [owner, planAdmin, receiver, subscriber1, subscriber2, operator, feeCollector, random] = accounts;
   const name = 'on demand';
   const period = time.duration.days(30);
-  const receivers = [planAdmin, share];
-  const percentages = ['9000', '1000'];
   const category = 'transport';
   const minAllowance = new BN(1000);
   const allowance = new BN(4000);
   const billingAmount = new BN(2000);
-  const receiversAmounts = percentages.map(e => billingAmount.mul(new BN(e)).div(new BN('10000')));
   const invalidSubscriptionId = web3.utils.padRight('0x12', 64);
 
   beforeEach(async () => {
@@ -69,9 +66,8 @@ contract('OnDemandSubscriptionsManagement', accounts => {
       minAllowance,
       this.token.address,
       period,
+      receiver,
       category,
-      receivers,
-      percentages,
       { from: planAdmin }
     );
 
@@ -105,11 +101,7 @@ contract('OnDemandSubscriptionsManagement', accounts => {
       await this.token.approve(this.transfers.address, billingAmount, { from: subscriber1 });
 
       const subscriber1InitialBalance = await this.token.balanceOf(subscriber1);
-      const receiversInitialBalance = [];
-
-      for (let i = 0; i < receivers.length; i++) {
-        receiversInitialBalance[i] = await this.token.balanceOf(receivers[i]);
-      }
+      const receiverInitialBalance = await this.token.balanceOf(receiver);
 
       const result = await this.subscriptionsManagement.bill(this.planId, [this.subscriptionId], [billingAmount], { from: planAdmin });
       const subscription = await this.subscriptions.getSubscription(this.subscriptionId);
@@ -124,10 +116,9 @@ contract('OnDemandSubscriptionsManagement', accounts => {
 
       expect(subscriber1FinalBalance).to.be.bignumber.equal(subscriber1InitialBalance.sub(billingAmount));
 
-      for (let i = 0; i < receivers.length; i++) {
-        const finalBalance = await this.token.balanceOf(receivers[i]);
-        expect(finalBalance).to.be.bignumber.equal(receiversInitialBalance[i].add(receiversAmounts[i]));
-      }
+      const receiverFinalBalance = await this.token.balanceOf(receiver);
+
+      expect(receiverFinalBalance).to.be.bignumber.equal(receiverInitialBalance.add(billingAmount));
     });
 
     it('should bill from operator account', async () => {
@@ -208,10 +199,9 @@ contract('OnDemandSubscriptionsManagement', accounts => {
 
       it('should not exceed allowance in cycle', async () => {
         const amount = billingAmount.mul(new BN(2));
-        await expectRevert(
-          this.subscriptionsManagement.bill(this.planId, [this.subscriptionId], [amount], { from: planAdmin }),
-          'ODSM: no billable subscriptions'
-        );
+        const result = await this.subscriptionsManagement.bill(this.planId, [this.subscriptionId], [amount], { from: planAdmin });
+        expectEvent.notEmitted(result, 'Billing');
+        expectEvent.notEmitted(result, 'BillingFailed');
       });
 
       it('should reset spent amount in the next cycle', async () => {
@@ -260,12 +250,11 @@ contract('OnDemandSubscriptionsManagement', accounts => {
         await this.subscriptions.cancel(this.subscriptionId, { from: subscriber1 });
       });
 
-      it('reverts when billing an unsubscribed user', async () => {
+      it('should not bill an unsubscribed user', async () => {
         await time.increase(period.add(new BN(1)));
-        await expectRevert(
-          this.subscriptionsManagement.bill(this.planId, [this.subscriptionId], [billingAmount], { from: planAdmin }),
-          'ODSM: no billable subscriptions'
-        );
+        const result = await this.subscriptionsManagement.bill(this.planId, [this.subscriptionId], [billingAmount], { from: planAdmin });
+        expectEvent.notEmitted(result, 'Billing');
+        expectEvent.notEmitted(result, 'BillingFailed');
       });
     });
   });
@@ -328,16 +317,6 @@ contract('OnDemandSubscriptionsManagement', accounts => {
 
       expect(finalSubscriber1Balance).to.be.bignumber.equal(initialSubscriber1Balance.sub(billingAmount));
       expect(finalSubscriber2Balance).to.be.bignumber.equal(initialSubscriber2Balance.sub(billingAmount));
-    });
-
-    it('reverts when providing a duplicate subscription id to billing function', async () => {
-      const subscriptions = [this.subscriptionId1, this.subscriptionId2, this.subscriptionId2];
-      const amounts = subscriptions.map(e => billingAmount);
-
-      await expectRevert(
-        this.subscriptionsManagement.bill(this.planId, subscriptions, amounts, { from: planAdmin }),
-        'ODSM: duplicate subscription ids'
-      );
     });
   });
 });

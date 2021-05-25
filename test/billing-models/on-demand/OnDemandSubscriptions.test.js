@@ -13,11 +13,9 @@ const Permission = require('../../helpers/permissions');
 const Role = require('../../../data/roles');
 
 contract('OnDemandSubscriptions', accounts => {
-  const [owner, planAdmin, share, subscriber, operator, feeCollector, random] = accounts;
+  const [owner, planAdmin, receiver, subscriber, operator, feeCollector, random] = accounts;
   const name = 'on demand';
   const period = time.duration.days(30);
-  const receivers = [planAdmin, share];
-  const percentages = ['9000', '1000'];
   const category = 'transport';
   const minAllowance = new BN(1000);
   const allowance = new BN(4000);
@@ -61,9 +59,8 @@ contract('OnDemandSubscriptions', accounts => {
       minAllowance,
       this.token.address,
       period,
+      receiver,
       category,
-      receivers,
-      percentages,
       { from: planAdmin }
     );
 

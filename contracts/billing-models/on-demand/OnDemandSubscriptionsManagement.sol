@@ -117,38 +117,33 @@ contract OnDemandSubscriptionsManagement is OnDemandConstants, Initializable {
         external
         onlyPrivileged(planId, PERMISSION_BILL)
     {
-        require(
-            subscriptionIds.length == amounts.length,
-            "ODSM: parameters length mismatch"
-        );
+        require(subscriptionIds.length == amounts.length, "ODSM: parameters length mismatch");
 
-        require(!Arrays.hasDuplicates(subscriptionIds), "ODSM: duplicate subscription ids");
-
-        bool[] memory isSameCycle;
-
-        (
-            subscriptionIds,
-            amounts,
-            isSameCycle
-        ) = _filterBillableSubscriptions(planId, subscriptionIds, amounts);
-
-        require(subscriptionIds.length != 0, "ODSM: no billable subscriptions");
-
-        bool[] memory success = _bill(planId, subscriptionIds, amounts);
+        address admin = plansDB.getAdmin(planId);
+        address token = plansDB.getToken(planId);
+        address receiver = plansDB.getReceiver(planId);
 
         for (uint256 i = 0; i < subscriptionIds.length; i++) {
-            if (!success[i]) {
-                emit BillingFailed(planId, subscriptionIds[i], amounts[i]);
+            if (subscriptionsDB.getPlanId(subscriptionIds[i]) != planId) {
                 continue;
             }
 
-            uint256 spent = isSameCycle[i] ?
-                subscriptionsDB.getSpent(subscriptionIds[i]) + amounts[i] : amounts[i];
+            bool isSameCycle = _isSameCycleOfLatestBilling(subscriptionIds[i]);
 
-            subscriptionsDB.setSpent(subscriptionIds[i], spent);
-            subscriptionsDB.setLatestBilling(subscriptionIds[i], block.timestamp);
+            if (_isBillingAllowed(subscriptionIds[i], amounts[i], isSameCycle)) {
+                if (!_bill(subscriptionIds[i], token, receiver, amounts[i], admin)) {
+                    emit BillingFailed(planId, subscriptionIds[i], amounts[i]);
+                    continue;
+                }
 
-            emit Billing(planId, subscriptionIds[i], amounts[i]);
+                uint256 spent = isSameCycle ?
+                    subscriptionsDB.getSpent(subscriptionIds[i]) + amounts[i] : amounts[i];
+
+                subscriptionsDB.setSpent(subscriptionIds[i], spent);
+                subscriptionsDB.setLatestBilling(subscriptionIds[i], block.timestamp);
+
+                emit Billing(planId, subscriptionIds[i], amounts[i]);
+            }
         }
     }
 
@@ -169,34 +164,26 @@ contract OnDemandSubscriptionsManagement is OnDemandConstants, Initializable {
     }
 
     /**
-     * @dev Executes the actual token transfers for the billings.
+     * @dev Executes the actual token transfer for the billing.
      */
-    function _bill(
-        bytes32 planId,
-        bytes32[] memory subscriptionIds,
-        uint256[] memory amounts
-    )
+    function _bill(bytes32 subscriptionId, address token, address receiver, uint256 amount, address admin)
         internal
-        returns (bool[] memory success)
+        returns (bool)
     {
-        address[] memory senders;
-        address[] memory receivers;
-        uint256[][] memory amounts_;
+        address[] memory receivers = new address[](1);
+        uint256[] memory amounts = new uint256[](1);
 
-        (
-            senders,
-            receivers,
-            amounts_
-        ) = _prepareForTransfers(planId, subscriptionIds, amounts);
+        receivers[0] = receiver;
+        amounts[0] = amount;
 
-        return transfers.batchTransfers(
-            plansDB.getToken(planId),
-            senders,
+        return transfers.transfer(
+            token,
+            subscriptionsDB.getAccount(subscriptionId),
             receivers,
-            amounts_,
-            plansDB.getAdmin(planId),
+            amounts,
+            admin,
             PAYMENT_TYPE,
-            subscriptionIds
+            subscriptionId
         );
     }
 
@@ -246,92 +233,5 @@ contract OnDemandSubscriptionsManagement is OnDemandConstants, Initializable {
         uint256 period = plansDB.getPeriod(planId);
 
         return elapsedTimeUntilNow / period == elapsedTimeUntilLatestBilling / period;
-    }
-
-    /**
-     * @dev Returns the data needed to perform billing transfers.
-     */
-    function _prepareForTransfers(
-        bytes32 planId,
-        bytes32[] memory subscriptionIds,
-        uint256[] memory amounts
-    )
-        internal
-        view
-        returns (
-            address[] memory senders,
-            address[] memory receivers,
-            uint256[][] memory batchAmounts
-        )
-    {
-        senders = new address[](subscriptionIds.length);
-        batchAmounts = new uint256[][](subscriptionIds.length);
-        receivers = plansDB.getReceivers(planId);
-
-        uint256[] memory percentages = plansDB.getPercentages(planId);
-
-        for (uint256 i = 0; i < subscriptionIds.length; i++) {
-            senders[i] = subscriptionsDB.getAccount(subscriptionIds[i]);
-            batchAmounts[i] = _calculateAmounts(amounts[i], percentages);
-        }
-
-        return (senders, receivers, batchAmounts);
-    }
-
-    /**
-     * @dev Returns a list of billable subscriptions, filtering invalid and the ones
-     * where the amount exceed the allowance.
-     */
-    function _filterBillableSubscriptions(
-        bytes32 planId,
-        bytes32[] memory subscriptionIds,
-        uint256[] memory amounts
-    )
-        internal
-        view
-        returns (
-            bytes32[] memory filteredSubscriptionIds,
-            uint256[] memory filteredAmounts,
-            bool[] memory isSameCycle
-        )
-    {
-        filteredSubscriptionIds = new bytes32[](subscriptionIds.length);
-        filteredAmounts = new uint256[](subscriptionIds.length);
-        isSameCycle = new bool[](subscriptionIds.length);
-
-        uint256 length;
-
-        for (uint256 i = 0; i < subscriptionIds.length; i++) {
-            if (amounts[i] != 0 && subscriptionsDB.getPlanId(subscriptionIds[i]) == planId) {
-                isSameCycle[length] = _isSameCycleOfLatestBilling(subscriptionIds[i]);
-
-                if (_isBillingAllowed(subscriptionIds[i], amounts[i], isSameCycle[length])) {
-                    filteredSubscriptionIds[length] = subscriptionIds[i];
-                    filteredAmounts[length] = amounts[i];
-                    length++;
-                }
-            }
-        }
-
-        Arrays.shrink(filteredSubscriptionIds, length);
-        Arrays.shrink(filteredAmounts, length);
-        Arrays.shrink(isSameCycle, length);
-
-        return (filteredSubscriptionIds, filteredAmounts, isSameCycle);
-    }
-
-    /**
-     * @dev Returns the partial amounts given a total amount and an array of percentages.
-     */
-    function _calculateAmounts(uint256 totalAmount, uint256[] memory percentages)
-        internal
-        pure
-        returns (uint256[] memory amounts)
-    {
-        amounts = new uint256[](percentages.length);
-
-        for (uint256 i = 0; i < percentages.length; i++) {
-            amounts[i] = totalAmount * percentages[i] / 10000;
-        }
     }
 }

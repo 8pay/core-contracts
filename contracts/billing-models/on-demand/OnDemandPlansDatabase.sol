@@ -70,33 +70,18 @@ contract OnDemandPlansDatabase is IOnDemandPlansDatabase, Database, AccessContro
     }
 
     /**
-     * @dev Sets the `receivers` of the plan.
+     * @dev Sets the `receiver` of the plan.
      *
      * Requirements:
      *
      * - caller must be a network contract.
      */
-    function setReceivers(bytes32 planId, address[] memory receivers)
+    function setReceiver(bytes32 planId, address receiver)
         external
         override
         onlyRole(NETWORK_CONTRACT_ROLE)
     {
-        _setAddressArray(_getPlanFieldKey(planId, "receivers"), receivers);
-    }
-
-    /**
-     * @dev Sets receivers `percentages` of the plan.
-     *
-     * Requirements:
-     *
-     * - caller must be a network contract.
-     */
-    function setPercentages(bytes32 planId, uint256[] memory percentages)
-        external
-        override
-        onlyRole(NETWORK_CONTRACT_ROLE)
-    {
-        _setUintArray(_getPlanFieldKey(planId, "percentages"), percentages);
+        _setAddress(_getPlanFieldKey(planId, "receiver"), receiver);
     }
 
     /**
@@ -143,27 +128,15 @@ contract OnDemandPlansDatabase is IOnDemandPlansDatabase, Database, AccessContro
     }
 
     /**
-     * @dev Returns the receivers of the plan.
+     * @dev Returns the receiver of the plan.
      */
-    function getReceivers(bytes32 planId)
+    function getReceiver(bytes32 planId)
         external
         view
         override
-        returns (address[] memory)
+        returns (address)
     {
-        return _getAddressArray(_getPlanFieldKey(planId, "receivers"));
-    }
-
-    /**
-     * @dev Returns receivers percentages of the plan.
-     */
-    function getPercentages(bytes32 planId)
-        external
-        view
-        override
-        returns (uint256[] memory)
-    {
-        return _getUintArray(_getPlanFieldKey(planId, "percentages"));
+        return _getAddress(_getPlanFieldKey(planId, "receiver"));
     }
 
     /**

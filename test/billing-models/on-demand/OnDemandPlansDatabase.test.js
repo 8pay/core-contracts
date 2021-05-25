@@ -5,12 +5,10 @@ const Role = require('../../../data/roles');
 const Permission = require('../../helpers/permissions');
 
 contract('OnDemandPlansDatabase', accounts => {
-  const [owner, authorized, planAdmin, receiver1, receiver2, operator, random] = accounts;
+  const [owner, authorized, planAdmin, receiver, operator, random] = accounts;
   const planId = web3.utils.padRight('0x12', 64);
   const minAllowance = new BN(4000);
   const token = web3.utils.padRight('0xa', 40);
-  const receivers = [receiver1, receiver2];
-  const percentages = ['9000', '1000'];
   const period = time.duration.days(30);
 
   beforeEach(async () => {
@@ -70,28 +68,15 @@ contract('OnDemandPlansDatabase', accounts => {
     );
   });
 
-  it('should set receivers and get value', async () => {
-    await this.database.setReceivers(planId, receivers, { from: authorized });
-    const value = await this.database.getReceivers(planId);
-    expect(value).to.be.deep.equal(receivers);
+  it('should set receiver and get value', async () => {
+    await this.database.setReceiver(planId, receiver, { from: authorized });
+    const value = await this.database.getReceiver(planId);
+    expect(value).to.be.equal(receiver);
   });
 
-  it('reverts when setting receivers from non-authorized', async () => {
+  it('reverts when setting receiver from non-authorized', async () => {
     await expectRevert(
-      this.database.setReceivers(planId, receivers, { from: random }),
-      'AccessControl: permission denied'
-    );
-  });
-
-  it('should set percentages and get value', async () => {
-    await this.database.setPercentages(planId, percentages, { from: authorized });
-    const value = await this.database.getPercentages(planId);
-    expect(value.map(e => e.toString())).to.be.deep.equal(percentages);
-  });
-
-  it('reverts when setting percentages from non-authorized', async () => {
-    await expectRevert(
-      this.database.setPercentages(planId, percentages, { from: random }),
+      this.database.setReceiver(planId, receiver, { from: random }),
       'AccessControl: permission denied'
     );
   });
