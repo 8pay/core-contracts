@@ -2,7 +2,6 @@
 pragma solidity 0.8.4;
 
 import { Initializable } from "@openzeppelin/contracts/proxy/utils/Initializable.sol";
-import { Arrays } from "../../libraries/Arrays.sol";
 import { ITokensRegistry } from "../../interfaces/ITokensRegistry.sol";
 import { IVariableRecurringPlansDatabase } from "../../interfaces/IVariableRecurringPlansDatabase.sol";
 import { VariableRecurringConstants } from "./VariableRecurringConstants.sol";

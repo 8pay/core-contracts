@@ -6,7 +6,6 @@ import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.s
 import { Initializable } from "@openzeppelin/contracts/proxy/utils/Initializable.sol";
 import { Address } from "@openzeppelin/contracts/utils/Address.sol";
 import { AccessControl } from "../access/AccessControl.sol";
-import { Arrays } from "../libraries/Arrays.sol";
 import { ITransfers } from "../interfaces/ITransfers.sol";
 import { ITokensRegistry } from "../interfaces/ITokensRegistry.sol";
 import { IFeeProvider } from "../interfaces/IFeeProvider.sol";

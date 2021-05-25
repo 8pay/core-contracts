@@ -2,7 +2,6 @@
 pragma solidity 0.8.4;
 
 import { Initializable } from "@openzeppelin/contracts/proxy/utils/Initializable.sol";
-import { Arrays } from "../../libraries/Arrays.sol";
 import { IOnDemandPlansDatabase } from "../../interfaces/IOnDemandPlansDatabase.sol";
 import { ITokensRegistry } from "../../interfaces/ITokensRegistry.sol";
 import { OnDemandConstants } from "./OnDemandConstants.sol";

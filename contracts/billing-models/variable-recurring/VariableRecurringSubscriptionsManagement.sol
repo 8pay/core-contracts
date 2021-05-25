@@ -5,7 +5,6 @@ import { Initializable } from "@openzeppelin/contracts/proxy/utils/Initializable
 import { ITransfers } from "../../interfaces/ITransfers.sol";
 import { IVariableRecurringPlansDatabase } from "../../interfaces/IVariableRecurringPlansDatabase.sol";
 import { IVariableRecurringSubscriptionsDatabase } from "../../interfaces/IVariableRecurringSubscriptionsDatabase.sol";
-import { Arrays } from "../../libraries/Arrays.sol";
 import { VariableRecurringConstants } from "./VariableRecurringConstants.sol";
 
 /**
