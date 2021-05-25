@@ -25,7 +25,7 @@ contract('FixedRecurringPlansDatabase', accounts => {
   it('reverts when setting admin from non-authorized', async () => {
     await expectRevert(
       this.database.setAdmin(planId, planAdmin, { from: random }),
-      'AccessControl: permission'
+      'AccessControl: permission denied'
     );
   });
 
@@ -38,7 +38,7 @@ contract('FixedRecurringPlansDatabase', accounts => {
   it('reverts when setting period from non-authorized', async () => {
     await expectRevert(
       this.database.setPeriod(planId, period, { from: random }),
-      'AccessControl: permission'
+      'AccessControl: permission denied'
     );
   });
 
@@ -51,7 +51,7 @@ contract('FixedRecurringPlansDatabase', accounts => {
   it('reverts when setting token from non-authorized', async () => {
     await expectRevert(
       this.database.setToken(planId, token, { from: random }),
-      'AccessControl: permission'
+      'AccessControl: permission denied'
     );
   });
 
@@ -64,7 +64,7 @@ contract('FixedRecurringPlansDatabase', accounts => {
   it('reverts when setting receiver from non-authorized', async () => {
     await expectRevert(
       this.database.setReceiver(planId, receiver, { from: random }),
-      'AccessControl: permission'
+      'AccessControl: permission denied'
     );
   });
 
@@ -77,7 +77,7 @@ contract('FixedRecurringPlansDatabase', accounts => {
   it('reverts when setting amount from non-authorized', async () => {
     await expectRevert(
       this.database.setAmount(planId, amount, { from: random }),
-      'AccessControl: permission'
+      'AccessControl: permission denied'
     );
   });
 
@@ -90,7 +90,7 @@ contract('FixedRecurringPlansDatabase', accounts => {
   it('reverts when setting permission from non-authorized', async () => {
     await expectRevert(
       this.database.setPermission(planId, Permission.TERMINATE, operator, true, { from: random }),
-      'AccessControl: permission'
+      'AccessControl: permission denied'
     );
   });
 });
