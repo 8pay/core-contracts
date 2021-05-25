@@ -121,82 +121,75 @@ contract VariableRecurringSubscriptionsManagement is VariableRecurringConstants,
         external
         onlyPrivileged(planId, PERMISSION_BILL)
     {
-        require(
-            subscriptionIds.length == amounts.length,
-            "VRSM: parameters length mismatch"
-        );
+        require(subscriptionIds.length == amounts.length, "VRSM: parameters length mismatch");
 
-        require(!Arrays.hasDuplicates(subscriptionIds), "VRSM: duplicate subscription ids");
-
-        uint256[] memory expiries;
-        uint256[] memory cancellations;
-
-        (
-            subscriptionIds,
-            amounts,
-            expiries,
-            cancellations
-        ) = _filterBillableSubscriptions(planId, subscriptionIds, amounts);
-
-
-        require(subscriptionIds.length != 0, "VRSM: no billable subscriptions");
-
+        address admin = plansDB.getAdmin(planId);
+        address token = plansDB.getToken(planId);
+        address receiver = plansDB.getReceiver(planId);
         uint256 period = plansDB.getPeriod(planId);
-        bool[] memory success = _bill(planId, subscriptionIds, amounts);
+        uint256 maxAmount = plansDB.getMaxAmount(planId);
 
         for (uint256 i = 0; i < subscriptionIds.length; i++) {
-            if (!success[i]) {
-                emit BillingFailed(planId, subscriptionIds[i], amounts[i]);
+            if (subscriptionsDB.getPlanId(subscriptionIds[i]) != planId || amounts[i] > maxAmount) {
                 continue;
             }
 
-            emit Billing(planId, subscriptionIds[i], amounts[i], expiries[i] - period + 1, expiries[i]);
+            uint256 cycleStart = subscriptionsDB.getCycleStart(subscriptionIds[i]);
+            uint256 cancellationRequest = subscriptionsDB.getCancellationRequest(subscriptionIds[i]);
 
-            if (cancellations[i] != 0) {
-                address account = subscriptionsDB.getAccount(subscriptionIds[i]);
+            if (cycleStart + period - 1 < block.timestamp || cancellationRequest != 0) {
+                if (!_bill(subscriptionIds[i], token, receiver, amounts[i], admin)) {
+                    emit BillingFailed(planId, subscriptionIds[i], amounts[i]);
+                    continue;
+                }
 
-                subscriptionsDB.setSubscriptionId(planId, account, bytes32(0));
+                emit Billing(planId, subscriptionIds[i], amounts[i], cycleStart, cycleStart + period - 1);
 
-                _deleteSubscription(subscriptionIds[i]);
+                if (cancellationRequest != 0) {
+                    _finalizeSubscriptionCancellation(planId, subscriptionIds[i]);
+                    continue;
+                }
 
-                emit SubscriptionCancelled(planId, subscriptionIds[i]);
-                continue;
+                subscriptionsDB.setCycleStart(subscriptionIds[i], cycleStart + period);
             }
-
-            subscriptionsDB.setCycleStart(subscriptionIds[i], expiries[i] + 1);
         }
     }
 
     /**
-     * @dev Executes the actual token transfers for the billings.
+     * @dev Executes the actual token transfer for the billing.
      */
-    function _bill(
-        bytes32 planId,
-        bytes32[] memory subscriptionIds,
-        uint256[] memory amounts
-    )
+    function _bill(bytes32 subscriptionId, address token, address receiver, uint256 amount, address admin)
         internal
-        returns (bool[] memory success)
+        returns (bool)
     {
-        address[] memory senders;
-        address[] memory receivers;
-        uint256[][] memory batchAmounts;
+        address[] memory receivers = new address[](1);
+        uint256[] memory amounts = new uint256[](1);
 
-        (
-            senders,
-            receivers,
-            batchAmounts
-        ) = _prepareForTransfers(planId, subscriptionIds, amounts);
+        receivers[0] = receiver;
+        amounts[0] = amount;
 
-        return transfers.batchTransfers(
-            plansDB.getToken(planId),
-            senders,
+        return transfers.transfer(
+            token,
+            subscriptionsDB.getAccount(subscriptionId),
             receivers,
-            batchAmounts,
-            plansDB.getAdmin(planId),
+            amounts,
+            admin,
             PAYMENT_TYPE,
-            subscriptionIds
+            subscriptionId
         );
+    }
+
+    /**
+     * @dev Finalizes a cancellation request by deleting the subscription.
+     */
+    function _finalizeSubscriptionCancellation(bytes32 planId, bytes32 subscriptionId) internal {
+        address account = subscriptionsDB.getAccount(subscriptionId);
+
+        subscriptionsDB.setSubscriptionId(planId, account, bytes32(0));
+
+        _deleteSubscription(subscriptionId);
+
+        emit SubscriptionCancelled(planId, subscriptionId);
     }
 
      /**
@@ -208,101 +201,5 @@ contract VariableRecurringSubscriptionsManagement is VariableRecurringConstants,
         subscriptionsDB.setSubscribedAt(subscriptionId, 0);
         subscriptionsDB.setCycleStart(subscriptionId, 0);
         subscriptionsDB.setCancellationRequest(subscriptionId, 0);
-    }
-
-    /**
-     * @dev Returns the data needed to perform billing transfers.
-     */
-    function _prepareForTransfers(
-        bytes32 planId,
-        bytes32[] memory subscriptionIds,
-        uint256[] memory amounts
-    )
-        internal
-        view
-        returns (
-            address[] memory senders,
-            address[] memory receivers,
-            uint256[][] memory batchAmounts
-        )
-    {
-        senders = new address[](subscriptionIds.length);
-        batchAmounts = new uint256[][](subscriptionIds.length);
-        receivers = plansDB.getReceivers(planId);
-
-        uint256[] memory percentages = plansDB.getPercentages(planId);
-
-        for (uint256 i = 0; i < subscriptionIds.length; i++) {
-            senders[i] = subscriptionsDB.getAccount(subscriptionIds[i]);
-            batchAmounts[i] = _calculateAmounts(amounts[i], percentages);
-        }
-
-        return (senders, receivers, batchAmounts);
-    }
-
-    /**
-     * @dev Returns a list of billable subscriptions, filtering invalid and the ones
-     * where the current cycle is not over yet.
-     */
-    function _filterBillableSubscriptions(
-        bytes32 planId,
-        bytes32[] memory subscriptionIds,
-        uint256[] memory amounts
-    )
-        internal
-        view
-        returns (
-            bytes32[] memory filteredSubscriptionIds,
-            uint256[] memory filteredAmounts,
-            uint256[] memory expiries,
-            uint256[] memory cancellations
-        )
-    {
-        filteredSubscriptionIds = new bytes32[](subscriptionIds.length);
-        filteredAmounts = new uint256[](subscriptionIds.length);
-        expiries = new uint256[](subscriptionIds.length);
-        cancellations = new uint256[](subscriptionIds.length);
-
-        uint256 length;
-        uint256 period = plansDB.getPeriod(planId);
-        uint256 maxAmount = plansDB.getMaxAmount(planId);
-
-        for (uint256 i = 0; i < subscriptionIds.length; i++) {
-            if (
-                subscriptionsDB.getPlanId(subscriptionIds[i]) == planId &&
-                amounts[i] <= maxAmount
-            ) {
-                expiries[length] = subscriptionsDB.getCycleStart(subscriptionIds[i]) + period - 1;
-                cancellations[length] = subscriptionsDB.getCancellationRequest(subscriptionIds[i]);
-
-                if (expiries[length] < block.timestamp || cancellations[length] != 0) {
-                    filteredSubscriptionIds[length] = subscriptionIds[i];
-                    filteredAmounts[length] = amounts[i];
-                    length++;
-                }
-            }
-        }
-
-        Arrays.shrink(filteredSubscriptionIds, length);
-        Arrays.shrink(filteredAmounts, length);
-        Arrays.shrink(expiries, length);
-        Arrays.shrink(cancellations, length);
-
-        return (filteredSubscriptionIds, filteredAmounts, expiries, cancellations);
-    }
-
-    /**
-     * @dev Returns the partial amounts given a total amount and an array of percentages.
-     */
-    function _calculateAmounts(uint256 totalAmount, uint256[] memory percentages)
-        internal
-        pure
-        returns (uint256[] memory amounts)
-    {
-        amounts = new uint256[](percentages.length);
-
-        for (uint256 i = 0; i < percentages.length; i++) {
-            amounts[i] = totalAmount * percentages[i] / 10000;
-        }
     }
 }

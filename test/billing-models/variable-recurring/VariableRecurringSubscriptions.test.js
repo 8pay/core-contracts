@@ -13,11 +13,9 @@ const Permission = require('../../helpers/permissions');
 const Role = require('../../../data/roles');
 
 contract('VariableRecurringSubscriptions', accounts => {
-  const [owner, planAdmin, share, subscriber, operator, feeCollector, random] = accounts;
+  const [owner, planAdmin, receiver, subscriber, operator, feeCollector, random] = accounts;
   const planAmount = new BN(4000);
   const period = time.duration.days(30);
-  const receivers = [planAdmin, share];
-  const percentages = ['9000', '1000'];
   const invalidPlanId = web3.utils.padRight('0x12', 64);
   const invalidSubscriptionId = web3.utils.padRight('0x12', 64);
 
@@ -58,9 +56,8 @@ contract('VariableRecurringSubscriptions', accounts => {
       planAmount,
       this.token.address,
       period,
+      receiver,
       'transport',
-      receivers,
-      percentages,
       { from: planAdmin }
     );
 

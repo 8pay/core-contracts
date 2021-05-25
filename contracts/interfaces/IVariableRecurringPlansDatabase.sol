@@ -6,8 +6,7 @@ interface IVariableRecurringPlansDatabase {
     function setMaxAmount(bytes32 planId, uint256 maxAmount) external;
     function setPeriod(bytes32 planId, uint256 period) external;
     function setToken(bytes32 planId, address token) external;
-    function setReceivers(bytes32 planId, address[] memory receivers) external;
-    function setPercentages(bytes32 planId, uint256[] memory percentages) external;
+    function setReceiver(bytes32 planId, address receiver) external;
 
     function setPermission(
         bytes32 planId,
@@ -36,15 +35,10 @@ interface IVariableRecurringPlansDatabase {
         view
         returns (address);
 
-    function getReceivers(bytes32 planId)
+    function getReceiver(bytes32 planId)
         external
         view
-        returns (address[] memory);
-
-    function getPercentages(bytes32 planId)
-        external
-        view
-        returns (uint256[] memory);
+        returns (address);
 
     function hasPermission(bytes32 planId, bytes32 permission, address account)
         external

@@ -30,7 +30,6 @@ contract VariableRecurringPlans is VariableRecurringConstants, Initializable {
     ITokensRegistry public tokensRegistry;
 
     uint256 public constant MIN_PERIOD = 600;
-    uint256 public constant MAX_RECEIVERS = 5;
 
     /**
      * @dev Emitted when a plan is created
@@ -42,15 +41,14 @@ contract VariableRecurringPlans is VariableRecurringConstants, Initializable {
         uint256 maxAmount,
         address token,
         uint256 period,
-        string category,
-        address[] receivers,
-        uint256[] percentages
+        address receiver,
+        string category
     );
 
     /**
-     * @dev Emitted when the receivers of a plan have been changed
+     * @dev Emitted when the receiver of a plan has been changed
      */
-    event ReceiversChanged(bytes32 indexed planId, address[] receivers, uint256[] percentages);
+    event ReceiverChanged(bytes32 indexed planId, address receiver);
 
     /**
      * @dev Emitted when `permission` is granted to `account`
@@ -103,9 +101,8 @@ contract VariableRecurringPlans is VariableRecurringConstants, Initializable {
         uint256 maxAmount,
         address token,
         uint256 period,
-        string memory category,
-        address[] memory receivers,
-        uint256[] memory percentages
+        address receiver,
+        string memory category
     )
         external
     {
@@ -113,8 +110,7 @@ contract VariableRecurringPlans is VariableRecurringConstants, Initializable {
         require(maxAmount != 0, "VRP: max amount is zero");
         require(bytes(name).length != 0, "VRP: name is empty");
         require(tokensRegistry.isActive(token), "VRP: token is not supported");
-
-        _validateReceivers(receivers, percentages);
+        require(receiver != address(0), "VRP: receiver is the zero address");
 
         bytes32 planId = keccak256(abi.encodePacked(
             PAYMENT_TYPE,
@@ -132,8 +128,7 @@ contract VariableRecurringPlans is VariableRecurringConstants, Initializable {
         plansDB.setToken(planId, token);
         plansDB.setPeriod(planId, period);
         plansDB.setMaxAmount(planId, maxAmount);
-        plansDB.setReceivers(planId, receivers);
-        plansDB.setPercentages(planId, percentages);
+        plansDB.setReceiver(planId, receiver);
 
         emit PlanCreated(
             planId,
@@ -142,33 +137,27 @@ contract VariableRecurringPlans is VariableRecurringConstants, Initializable {
             maxAmount,
             token,
             period,
-            category,
-            receivers,
-            percentages
+            receiver,
+            category
         );
     }
 
     /**
-     * @dev Changes the receivers of the given plan.
+     * @dev Changes the receiver of the given plan.
      *
      * Requirements:
      *
      * - caller must be admin of the plan
      */
-    function changeReceivers(
-        bytes32 planId,
-        address[] memory receivers,
-        uint256[] memory percentages
-    )
+    function changeReceiver(bytes32 planId, address receiver)
         external
         onlyAdmin(planId)
     {
-        _validateReceivers(receivers, percentages);
+        require(receiver != address(0), "VRP: receiver is the zero address");
 
-        plansDB.setReceivers(planId, receivers);
-        plansDB.setPercentages(planId, percentages);
+        plansDB.setReceiver(planId, receiver);
 
-        emit ReceiversChanged(planId, receivers, percentages);
+        emit ReceiverChanged(planId, receiver);
     }
 
     /**
@@ -228,8 +217,7 @@ contract VariableRecurringPlans is VariableRecurringConstants, Initializable {
             uint256 maxAmount,
             uint256 period,
             address token,
-            address[] memory receivers,
-            uint256[] memory percentages
+            address receiver
         )
     {
         require(exists(planId), "VRP: invalid plan id");
@@ -238,8 +226,7 @@ contract VariableRecurringPlans is VariableRecurringConstants, Initializable {
         period = plansDB.getPeriod(planId);
         maxAmount = plansDB.getMaxAmount(planId);
         token = tokensRegistry.getLatestAddress(plansDB.getToken(planId));
-        receivers = plansDB.getReceivers(planId);
-        percentages = plansDB.getPercentages(planId);
+        receiver = plansDB.getReceiver(planId);
     }
 
     /**
@@ -265,30 +252,5 @@ contract VariableRecurringPlans is VariableRecurringConstants, Initializable {
         returns (bool)
     {
         return plansDB.hasPermission(planId, permission, account);
-    }
-
-    /**
-     * @dev Validates receivers and throws if they are invalid.
-     */
-    function _validateReceivers(address[] memory receivers, uint256[] memory percentages)
-        internal
-        pure
-    {
-        require(
-            receivers.length == percentages.length,
-            "VRP: parameters length mismatch"
-        );
-
-        require(
-            receivers.length > 0 && receivers.length <= MAX_RECEIVERS,
-            "VRP: invalid receivers length"
-        );
-
-        for (uint256 i = 0; i < receivers.length; i++){
-            require(receivers[i] != address(0), "VRP: receiver is the zero address");
-            require(percentages[i] != 0, "VRP: percentage is zero");
-        }
-
-        require(Arrays.sum(percentages) == 10000, "VRP: invalid percentages");
     }
 }

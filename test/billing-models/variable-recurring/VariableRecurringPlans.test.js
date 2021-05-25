@@ -9,11 +9,9 @@ const Permission = require('../../helpers/permissions');
 const Role = require('../../../data/roles');
 
 contract('VariableRecurringPlans', accounts => {
-  const [owner, planAdmin, receiver1, receiver2, operator1, operator2, random] = accounts;
+  const [owner, planAdmin, receiver, operator1, operator2, random] = accounts;
   const name = 'variable';
   const category = 'transport';
-  const receivers = [receiver1, receiver2];
-  const percentages = ['9000', '1000'];
   const period = time.duration.days(30);
   const maxAmount = new BN(4000);
 
@@ -33,9 +31,8 @@ contract('VariableRecurringPlans', accounts => {
       maxAmount,
       this.token.address,
       period,
+      receiver,
       category,
-      receivers,
-      percentages,
       { from: planAdmin }
     );
 
@@ -48,9 +45,8 @@ contract('VariableRecurringPlans', accounts => {
       maxAmount: maxAmount,
       token: this.token.address,
       period: period,
-      category: category,
-      receivers: receivers,
-      percentages: percentages
+      receiver: receiver,
+      category: category
     });
 
     const exists = await this.plans.exists(this.planId);
@@ -70,9 +66,8 @@ contract('VariableRecurringPlans', accounts => {
         maxAmount,
         this.token.address,
         period,
+        receiver,
         category,
-        receivers,
-        percentages,
         { from: planAdmin }
       ),
       'VRP: name is empty'
@@ -86,9 +81,8 @@ contract('VariableRecurringPlans', accounts => {
         0,
         this.token.address,
         period,
+        receiver,
         category,
-        receivers,
-        percentages,
         { from: planAdmin }
       ),
       'VRP: max amount is zero'
@@ -102,9 +96,8 @@ contract('VariableRecurringPlans', accounts => {
         maxAmount,
         this.plans.address,
         period,
+        receiver,
         category,
-        receivers,
-        percentages,
         { from: planAdmin }
       ),
       'VRP: token is not supported'
@@ -118,60 +111,26 @@ contract('VariableRecurringPlans', accounts => {
         maxAmount,
         this.token.address,
         300,
+        receiver,
         category,
-        receivers,
-        percentages,
         { from: planAdmin }
       ),
       'VRP: period is too short'
     );
   });
 
-  it('reverts when creating a plan with invalid receivers', async () => {
+  it('reverts when creating a plan with invalid receiver', async () => {
     await expectRevert(
       this.plans.createPlan(
         name,
         maxAmount,
         this.token.address,
         period,
+        constants.ZERO_ADDRESS,
         category,
-        receivers.map(() => constants.ZERO_ADDRESS),
-        percentages,
         { from: planAdmin }
       ),
       'VRP: receiver is the zero address'
-    );
-  });
-
-  it('reverts when creating a plan with invalid percentages', async () => {
-    await expectRevert(
-      this.plans.createPlan(
-        name,
-        maxAmount,
-        this.token.address,
-        period,
-        category,
-        receivers,
-        ['10000', '0'],
-        { from: planAdmin }
-      ),
-      'VRP: percentage is zero'
-    );
-  });
-
-  it('reverts when creating a plan with empty receivers and percentages', async () => {
-    await expectRevert(
-      this.plans.createPlan(
-        name,
-        maxAmount,
-        this.token.address,
-        period,
-        category,
-        [],
-        [],
-        { from: planAdmin }
-      ),
-      'VRP: invalid receivers length'
     );
   });
 
@@ -182,9 +141,8 @@ contract('VariableRecurringPlans', accounts => {
         maxAmount,
         this.token.address,
         period,
+        receiver,
         category,
-        receivers,
-        percentages,
         { from: planAdmin }
       );
 
@@ -196,52 +154,29 @@ contract('VariableRecurringPlans', accounts => {
       expect(plan.admin).to.be.equal(planAdmin);
       expect(plan.period).to.be.bignumber.equal(period);
       expect(plan.token).to.be.bignumber.equal(this.token.address);
-      expect(plan.receivers).to.be.deep.equal(receivers);
-      expect(plan.percentages.map(e => e.toString())).to.be.deep.equal(percentages);
+      expect(plan.receiver).to.be.equal(receiver);
     });
 
     it('check if is admin', async () => {
       let isAdmin = await this.plans.isAdmin(this.planId, planAdmin);
       expect(isAdmin).to.be.equal(true);
-      isAdmin = await this.plans.isAdmin(this.planId, receiver1);
+      isAdmin = await this.plans.isAdmin(this.planId, receiver);
       expect(isAdmin).to.be.equal(false);
     });
 
-    it('should change receivers', async () => {
-      const newReceivers = [receiver1, receiver2];
-      const newPercentages = ['8000', '2000'];
-      const result = await this.plans.changeReceivers(this.planId, newReceivers, newPercentages, { from: planAdmin });
-      expectEvent(result, 'ReceiversChanged', { planId: this.planId, receivers: newReceivers, percentages: newPercentages });
+    it('should change receiver', async () => {
+      const newReceiver = random;
+      const result = await this.plans.changeReceiver(this.planId, newReceiver, { from: planAdmin });
+      expectEvent(result, 'ReceiverChanged', { planId: this.planId, receiver: newReceiver });
       const plan = await this.plans.getPlan(this.planId);
-      expect(plan.receivers).to.be.deep.equal(newReceivers);
-      expect(plan.percentages.map(e => e.toString())).to.be.deep.equal(newPercentages);
+      expect(plan.receiver).to.be.equal(newReceiver);
     });
 
-    it('reverts when changing receivers with invalid total percentage', async () => {
-      const newReceivers = [receiver1, receiver2];
-      const newPercentages = ['8000', '1000'];
+    it('reverts when changing receiver from non-admin', async () => {
+      const newReceiver = random;
 
       await expectRevert(
-        this.plans.changeReceivers(this.planId, newReceivers, newPercentages, { from: planAdmin }),
-        'VRP: invalid percentages'
-      );
-    });
-
-    it('reverts when changing receivers with different parameters length', async () => {
-      const newReceivers = [receiver1, receiver2];
-      const newAmounts = ['3000'];
-
-      await expectRevert(
-        this.plans.changeReceivers(this.planId, newReceivers, newAmounts, { from: planAdmin }),
-        'VRP: parameters length mismatch'
-      );
-    });
-
-    it('reverts when changing receivers from non-admin', async () => {
-      const newReceivers = [receiver1, receiver2];
-      const newAmounts = ['8000', '2000'];
-      await expectRevert(
-        this.plans.changeReceivers(this.planId, newReceivers, newAmounts, { from: random }),
+        this.plans.changeReceiver(this.planId, newReceiver, { from: random }),
         'VRP: caller is not plan\'s admin'
       );
     });
