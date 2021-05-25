@@ -14,11 +14,10 @@ const Permission = require('../../helpers/permissions');
 const Role = require('../../../data/roles');
 
 contract('FixedRecurringSubscriptionsManagement', accounts => {
-  const [owner, planAdmin, share, subscriber1, subscriber2, operator, feeCollector, random] = accounts;
+  const [owner, planAdmin, receiver, subscriber1, subscriber2, operator, feeCollector, random] = accounts;
   const planAmount = new BN(4000);
   const period = time.duration.days(30);
-  const receivers = [planAdmin, share];
-  const amounts = [new BN('3200'), new BN('800')];
+  const amount = new BN('4000');
   const invalidSubscriptionId = web3.utils.padRight('0x12', 64);
 
   beforeEach(async () => {
@@ -62,11 +61,11 @@ contract('FixedRecurringSubscriptionsManagement', accounts => {
   beforeEach(async () => {
     const result = await this.plans.createPlan(
       'fixed',
+      amount,
       this.token.address,
       period,
+      receiver,
       'transport',
-      receivers,
-      amounts,
       { from: planAdmin }
     );
 
@@ -84,11 +83,10 @@ contract('FixedRecurringSubscriptionsManagement', accounts => {
       this.subscriptionTimestamp = (await web3.eth.getBlock(result.receipt.blockNumber)).timestamp;
     });
 
-    it('reverts when billing before expiry', async () => {
-      await expectRevert(
-        this.subscriptionsManagement.bill(this.planId, [this.subscriptionId], { from: planAdmin }),
-        'FRSM: no billable subscriptions'
-      );
+    it('should not bill before expiry', async () => {
+      const result = await this.subscriptionsManagement.bill(this.planId, [this.subscriptionId], { from: planAdmin });
+      expectEvent.notEmitted(result, 'Billing');
+      expectEvent.notEmitted(result, 'BillingFailed');
     });
 
     it('should bill from admin account', async () => {
@@ -97,11 +95,7 @@ contract('FixedRecurringSubscriptionsManagement', accounts => {
       await this.token.approve(this.transfers.address, planAmount, { from: subscriber1 });
 
       const subscriber1InitialBalance = await this.token.balanceOf(subscriber1);
-      const receiversInitialBalance = [];
-
-      for (let i = 0; i < receivers.length; i++) {
-        receiversInitialBalance[i] = await this.token.balanceOf(receivers[i]);
-      }
+      const receiverInitialBalance = await await this.token.balanceOf(receiver);
 
       const initialSubscription = await this.subscriptions.getSubscription(this.subscriptionId);
       const result = await this.subscriptionsManagement.bill(this.planId, [this.subscriptionId], { from: planAdmin });
@@ -123,10 +117,9 @@ contract('FixedRecurringSubscriptionsManagement', accounts => {
 
       expect(subscriber1FinalBalance, subscriber1InitialBalance.sub(planAmount));
 
-      for (let i = 0; i < receivers.length; i++) {
-        const finalBalance = await this.token.balanceOf(receivers[i]);
-        expect(finalBalance).to.be.bignumber.equal(receiversInitialBalance[i].add(amounts[i]));
-      }
+      const receiverFinalBalance = await this.token.balanceOf(receiver);
+
+      expect(receiverFinalBalance).to.be.bignumber.equal(receiverInitialBalance.add(amount));
     });
 
     it('should bill from random account', async () => {
@@ -174,12 +167,12 @@ contract('FixedRecurringSubscriptionsManagement', accounts => {
         await this.subscriptions.cancel(this.subscriptionId, { from: subscriber1 });
       });
 
-      it('reverts when billing an unsubscribed user', async () => {
+      it('should not bill an unsubscribed user', async () => {
         await time.increase(period.add(new BN(1)));
-        await expectRevert(
-          this.subscriptionsManagement.bill(this.planId, [this.subscriptionId], { from: planAdmin }),
-          'FRSM: no billable subscriptions'
-        );
+
+        const result = await this.subscriptionsManagement.bill(this.planId, [this.subscriptionId], { from: planAdmin });
+        expectEvent.notEmitted(result, 'Billing');
+        expectEvent.notEmitted(result, 'BillingFailed');
       });
     });
 
@@ -259,15 +252,6 @@ contract('FixedRecurringSubscriptionsManagement', accounts => {
 
       expect(finalSubscriber1Balance).to.be.bignumber.equal(initialSubscriber1Balance.sub(planAmount));
       expect(finalSubscriber2Balance).to.be.bignumber.equal(initialSubscriber2Balance.sub(planAmount));
-    });
-
-    it('reverts when providing a duplicate subscription id to billing function', async () => {
-      const subscriptions = [this.subscriptionId1, this.subscriptionId2, this.subscriptionId2];
-
-      await expectRevert(
-        this.subscriptionsManagement.bill(this.planId, subscriptions, { from: planAdmin }),
-        'FRSM: duplicate subscription ids'
-      );
     });
   });
 });

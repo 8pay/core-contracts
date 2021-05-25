@@ -13,11 +13,10 @@ const Permission = require('../../helpers/permissions');
 const Role = require('../../../data/roles');
 
 contract('FixedRecurringSubscriptions', accounts => {
-  const [owner, planAdmin, share, subscriber, operator, feeCollector, random] = accounts;
+  const [owner, planAdmin, receiver, subscriber, operator, feeCollector, random] = accounts;
   const planAmount = new BN(4000);
   const period = time.duration.days(30);
-  const receivers = [planAdmin, share];
-  const amounts = [new BN('3200'), new BN('800')];
+  const amount = new BN('4000');
   const invalidPlanId = web3.utils.padRight('0x12', 64);
   const invalidSubscriptionId = web3.utils.padRight('0x12', 64);
 
@@ -56,11 +55,11 @@ contract('FixedRecurringSubscriptions', accounts => {
   beforeEach(async () => {
     const result = await this.plans.createPlan(
       'fixed',
+      amount,
       this.token.address,
       period,
+      receiver,
       'transport',
-      receivers,
-      amounts,
       { from: planAdmin }
     );
 
@@ -74,11 +73,7 @@ contract('FixedRecurringSubscriptions', accounts => {
     await this.token.approve(this.transfers.address, planAmount, { from: subscriber });
 
     const subscriber1InitialBalance = await this.token.balanceOf(subscriber);
-    const receiversInitialBalance = [];
-
-    for (let i = 0; i < receivers.length; i++) {
-      receiversInitialBalance[i] = await this.token.balanceOf(receivers[i]);
-    }
+    const receiverInitialBalance = await this.token.balanceOf(receiver);
 
     const result = await this.subscriptions.subscribe(this.planId, { from: subscriber });
     const subscriptionTimestamp = new BN((await web3.eth.getBlock(result.receipt.blockNumber)).timestamp);
@@ -103,10 +98,9 @@ contract('FixedRecurringSubscriptions', accounts => {
 
     expect(subscriber1FinalBalance).to.be.bignumber.equal(subscriber1InitialBalance.sub(planAmount));
 
-    for (let i = 0; i < receivers.length; i++) {
-      const finalBalance = await this.token.balanceOf(receivers[i]);
-      expect(finalBalance).to.be.bignumber.equal(receiversInitialBalance[i].add(amounts[i]));
-    }
+    const receiverFinalBalance = await this.token.balanceOf(receiver);
+
+    expect(receiverFinalBalance).to.be.bignumber.equal(receiverInitialBalance.add(amount));
   });
 
   it('reverts when subscribing without enough balance', async () => {

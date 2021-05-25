@@ -5,11 +5,10 @@ const Role = require('../../../data/roles');
 const Permission = require('../../helpers/permissions');
 
 contract('FixedRecurringPlansDatabase', accounts => {
-  const [owner, authorized, planAdmin, receiver1, receiver2, operator, random] = accounts;
+  const [owner, authorized, planAdmin, receiver, operator, random] = accounts;
   const planId = web3.utils.padRight('0x12', 64);
   const token = web3.utils.padRight('0xa', 40);
-  const receivers = [receiver1, receiver2];
-  const amounts = ['3200', '800'];
+  const amount = '4000';
   const period = time.duration.days(30);
 
   beforeEach(async () => {
@@ -56,28 +55,28 @@ contract('FixedRecurringPlansDatabase', accounts => {
     );
   });
 
-  it('should set receivers and get value', async () => {
-    await this.database.setReceivers(planId, receivers, { from: authorized });
-    const value = await this.database.getReceivers(planId);
-    expect(value).to.be.deep.equal(receivers);
+  it('should set receiver and get value', async () => {
+    await this.database.setReceiver(planId, receiver, { from: authorized });
+    const value = await this.database.getReceiver(planId);
+    expect(value).to.be.equal(receiver);
   });
 
-  it('reverts when setting receivers from non-authorized', async () => {
+  it('reverts when setting receiver from non-authorized', async () => {
     await expectRevert(
-      this.database.setReceivers(planId, receivers, { from: random }),
+      this.database.setReceiver(planId, receiver, { from: random }),
       'AccessControl: permission'
     );
   });
 
-  it('should set amounts and get value', async () => {
-    await this.database.setAmounts(planId, amounts, { from: authorized });
-    const value = await this.database.getAmounts(planId);
-    expect(value.map(e => e.toString())).to.be.deep.equal(amounts);
+  it('should set amount and get value', async () => {
+    await this.database.setAmount(planId, amount, { from: authorized });
+    const value = await this.database.getAmount(planId);
+    expect(value).to.be.bignumber.equal(amount);
   });
 
-  it('reverts when setting amounts from non-authorized', async () => {
+  it('reverts when setting amount from non-authorized', async () => {
     await expectRevert(
-      this.database.setAmounts(planId, amounts, { from: random }),
+      this.database.setAmount(planId, amount, { from: random }),
       'AccessControl: permission'
     );
   });

@@ -55,33 +55,33 @@ contract FixedRecurringPlansDatabase is IFixedRecurringPlansDatabase, Database, 
     }
 
     /**
-     * @dev Sets the `receivers` of the plan.
+     * @dev Sets the `receiver` of the plan.
      *
      * Requirements:
      *
      * - caller must be a network contract.
      */
-    function setReceivers(bytes32 planId, address[] memory receivers)
+    function setReceiver(bytes32 planId, address receiver)
         external
         override
         onlyRole(NETWORK_CONTRACT_ROLE)
     {
-        _setAddressArray(_getPlanFieldKey(planId, "receivers"), receivers);
+        _setAddress(_getPlanFieldKey(planId, "receiver"), receiver);
     }
 
     /**
-     * @dev Sets the `amounts` of the plan.
+     * @dev Sets the `amount` of the plan.
      *
      * Requirements:
      *
      * - caller must be a network contract.
      */
-    function setAmounts(bytes32 planId, uint256[] memory amounts)
+    function setAmount(bytes32 planId, uint256 amount)
         external
         override
         onlyRole(NETWORK_CONTRACT_ROLE)
     {
-        _setUintArray(_getPlanFieldKey(planId, "amounts"), amounts);
+        _setUint(_getPlanFieldKey(planId, "amount"), amount);
     }
 
     /**
@@ -121,17 +121,17 @@ contract FixedRecurringPlansDatabase is IFixedRecurringPlansDatabase, Database, 
     }
 
     /**
-     * @dev Returns the receivers of the plan.
+     * @dev Returns the receiver of the plan.
      */
-    function getReceivers(bytes32 planId) external override view returns (address[] memory) {
-        return _getAddressArray(_getPlanFieldKey(planId, "receivers"));
+    function getReceiver(bytes32 planId) external override view returns (address) {
+        return _getAddress(_getPlanFieldKey(planId, "receiver"));
     }
 
     /**
-     * @dev Returns the amounts of the plan.
+     * @dev Returns the amount of the plan.
      */
-    function getAmounts(bytes32 planId) external override view returns (uint256[] memory) {
-        return _getUintArray(_getPlanFieldKey(planId, "amounts"));
+    function getAmount(bytes32 planId) external override view returns (uint256) {
+        return _getUint(_getPlanFieldKey(planId, "amount"));
     }
 
     /**

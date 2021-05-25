@@ -9,11 +9,10 @@ const Permission = require('../../helpers/permissions');
 const Role = require('../../../data/roles');
 
 contract('FixedRecurringPlans', accounts => {
-  const [owner, planAdmin, receiver1, receiver2, operator1, operator2, random] = accounts;
+  const [owner, planAdmin, receiver, operator1, operator2, random] = accounts;
   const name = 'fixed';
   const category = 'transport';
-  const receivers = [receiver1, receiver2];
-  const amounts = ['3200', '800'];
+  const amount = '4000';
   const period = time.duration.days(30);
 
   beforeEach(async () => {
@@ -29,11 +28,11 @@ contract('FixedRecurringPlans', accounts => {
   it('should create a plan', async () => {
     const result = await this.plans.createPlan(
       name,
+      amount,
       this.token.address,
       period,
+      receiver,
       category,
-      receivers,
-      amounts,
       { from: planAdmin }
     );
 
@@ -43,11 +42,11 @@ contract('FixedRecurringPlans', accounts => {
       id: this.planId,
       admin: planAdmin,
       name: name,
+      amount: amount,
       token: this.token.address,
       period: period,
-      category: category,
-      receivers: receivers,
-      amounts: amounts
+      receiver: receiver,
+      category: category
     });
 
     const exists = await this.plans.exists(this.planId);
@@ -64,11 +63,11 @@ contract('FixedRecurringPlans', accounts => {
     await expectRevert(
       this.plans.createPlan(
         '',
+        amount,
         this.token.address,
         period,
+        receiver,
         category,
-        receivers,
-        amounts,
         { from: planAdmin }
       ),
       'FRP: name is empty'
@@ -79,11 +78,11 @@ contract('FixedRecurringPlans', accounts => {
     await expectRevert(
       this.plans.createPlan(
         name,
+        amount,
         this.plans.address,
         period,
+        receiver,
         category,
-        receivers,
-        amounts,
         { from: planAdmin }
       ),
       'FRP: token is not supported'
@@ -94,59 +93,44 @@ contract('FixedRecurringPlans', accounts => {
     await expectRevert(
       this.plans.createPlan(
         name,
+        amount,
         this.token.address,
         300,
+        receiver,
         category,
-        receivers,
-        amounts,
         { from: planAdmin }
       ),
       'FRP: period is too short'
     );
   });
 
-  it('reverts when creating a plan with invalid receivers', async () => {
+  it('reverts when creating a plan with invalid receiver', async () => {
     await expectRevert(
       this.plans.createPlan(
         name,
+        amount,
         this.token.address,
         period,
+        constants.ZERO_ADDRESS,
         category,
-        receivers.map(() => constants.ZERO_ADDRESS),
-        amounts,
         { from: planAdmin }
       ),
-      'FRP: receiver is zero address'
+      'FRP: receiver is the zero address'
     );
   });
 
-  it('reverts when creating a plan with invalid amounts', async () => {
+  it('reverts when creating a plan with invalid amount', async () => {
     await expectRevert(
       this.plans.createPlan(
         name,
+        '0',
         this.token.address,
         period,
+        receiver,
         category,
-        receivers,
-        ['0', '0'],
         { from: planAdmin }
       ),
       'FRP: amount is zero'
-    );
-  });
-
-  it('reverts when creating a plan with empty receivers and amounts', async () => {
-    await expectRevert(
-      this.plans.createPlan(
-        name,
-        this.token.address,
-        period,
-        category,
-        [],
-        [],
-        { from: planAdmin }
-      ),
-      'FRP: invalid receivers length'
     );
   });
 
@@ -154,11 +138,11 @@ contract('FixedRecurringPlans', accounts => {
     beforeEach(async () => {
       const result = await this.plans.createPlan(
         name,
+        amount,
         this.token.address,
         period,
+        receiver,
         category,
-        receivers,
-        amounts,
         { from: planAdmin }
       );
 
@@ -170,53 +154,30 @@ contract('FixedRecurringPlans', accounts => {
       expect(plan.admin).to.be.equal(planAdmin);
       expect(plan.period).to.be.bignumber.equal(period);
       expect(plan.token).to.be.equal(this.token.address);
-      expect(plan.receivers).to.be.deep.equal(receivers);
-      expect(plan.amounts.map(e => e.toString())).to.be.deep.equal(amounts.map(e => e.toString()));
+      expect(plan.receiver).to.be.equal(receiver);
+      expect(plan.amount).to.be.bignumber.equal(amount);
     });
 
     it('should check plan admin', async () => {
       let isAdmin = await this.plans.isAdmin(this.planId, planAdmin);
       expect(isAdmin).to.be.equal(true);
-      isAdmin = await this.plans.isAdmin(this.planId, receiver1);
+      isAdmin = await this.plans.isAdmin(this.planId, receiver);
       expect(isAdmin).to.be.equal(false);
     });
 
-    it('should change receivers', async () => {
-      const newReceivers = [receiver1, receiver2];
-      const newAmounts = ['3000', '1000'];
-      const result = await this.plans.changeReceivers(this.planId, newReceivers, newAmounts, { from: planAdmin });
-      expectEvent(result, 'ReceiversChanged', { planId: this.planId, receivers: newReceivers, amounts: newAmounts });
+    it('should change receiver', async () => {
+      const newReceiver = random;
+      const result = await this.plans.changeReceiver(this.planId, newReceiver, { from: planAdmin });
+      expectEvent(result, 'ReceiverChanged', { planId: this.planId, receiver: newReceiver });
       const plan = await this.plans.getPlan(this.planId);
-      expect(plan.receivers).to.be.deep.equal(newReceivers);
-      expect(plan.amounts.map(e => e.toString())).to.be.deep.equal(newAmounts.map(e => e.toString()));
+      expect(plan.receiver).to.be.equal(newReceiver);
     });
 
-    it('reverts when changing receivers with different total amount', async () => {
-      const newReceivers = [receiver1, receiver2];
-      const newAmounts = ['3000', '500'];
+    it('reverts when changing receiver from non-admin', async () => {
+      const newReceiver = random;
 
       await expectRevert(
-        this.plans.changeReceivers(this.planId, newReceivers, newAmounts, { from: planAdmin }),
-        'FRP: invalid amounts'
-      );
-    });
-
-    it('reverts when changing receivers with different parameters length', async () => {
-      const newReceivers = [receiver1, receiver2];
-      const newAmounts = ['3000'];
-
-      await expectRevert(
-        this.plans.changeReceivers(this.planId, newReceivers, newAmounts, { from: planAdmin }),
-        'FRP: parameters length mismatch'
-      );
-    });
-
-    it('reverts when changing receivers from non-admin', async () => {
-      const newReceivers = [receiver1, receiver2];
-      const newAmounts = ['3000', '1000'];
-
-      await expectRevert(
-        this.plans.changeReceivers(this.planId, newReceivers, newAmounts, { from: random }),
+        this.plans.changeReceiver(this.planId, newReceiver, { from: random }),
         'FRP: caller is not plan\'s admin'
       );
     });

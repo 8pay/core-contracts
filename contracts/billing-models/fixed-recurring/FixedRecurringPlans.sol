@@ -28,7 +28,6 @@ contract FixedRecurringPlans is FixedRecurringConstants, Initializable {
     ITokensRegistry public tokensRegistry;
 
     uint256 public constant MIN_PERIOD = 600;
-    uint256 public constant MAX_RECEIVERS = 5;
 
     /**
      * @dev Emitted when a plan is created
@@ -37,17 +36,17 @@ contract FixedRecurringPlans is FixedRecurringConstants, Initializable {
         bytes32 indexed id,
         address indexed admin,
         string name,
+        uint256 amount,
         address token,
         uint256 period,
-        string category,
-        address[] receivers,
-        uint256[] amounts
+        address receiver,
+        string category
     );
 
     /**
-     * @dev Emitted when the receivers of a plan have been changed
+     * @dev Emitted when the receiver of a plan has been changed
      */
-    event ReceiversChanged(bytes32 indexed planId, address[] receivers, uint256[] amounts);
+    event ReceiverChanged(bytes32 indexed planId, address receiver);
 
     /**
      * @dev Emitted when `permission` is granted to `account`
@@ -91,25 +90,25 @@ contract FixedRecurringPlans is FixedRecurringConstants, Initializable {
      */
     function createPlan(
         string memory name,
+        uint256 amount,
         address token,
         uint256 period,
-        string memory category,
-        address[] memory receivers,
-        uint256[] memory amounts
+        address receiver,
+        string memory category
     )
         external
     {
         require(period >= MIN_PERIOD, "FRP: period is too short");
         require(bytes(name).length != 0, "FRP: name is empty");
+        require(amount != 0, "FRP: amount is zero");
         require(tokensRegistry.isActive(token), "FRP: token is not supported");
-
-        _validateReceivers(receivers, amounts);
+        require(receiver != address(0), "FRP: receiver is the zero address");
 
         bytes32 planId = keccak256(abi.encodePacked(
             PAYMENT_TYPE,
             msg.sender,
             name,
-            Arrays.sum(amounts),
+            amount,
             token,
             period,
             block.timestamp
@@ -118,52 +117,39 @@ contract FixedRecurringPlans is FixedRecurringConstants, Initializable {
         require(!exists(planId), "FRP: plan already exists");
 
         plansDB.setAdmin(planId, msg.sender);
+        plansDB.setAmount(planId, amount);
         plansDB.setToken(planId, token);
         plansDB.setPeriod(planId, period);
-        plansDB.setReceivers(planId, receivers);
-        plansDB.setAmounts(planId, amounts);
+        plansDB.setReceiver(planId, receiver);
 
         emit PlanCreated(
             planId,
             msg.sender,
             name,
+            amount,
             token,
             period,
-            category,
-            receivers,
-            amounts
+            receiver,
+            category
         );
     }
 
     /**
-     * @dev Changes the receivers of the given plan.
+     * @dev Changes the receiver of the given plan.
      *
      * Requirements:
      *
      * - caller must be admin of the plan
-     * - the new total amount must be equal to the old total amount
      */
-    function changeReceivers(
-        bytes32 planId,
-        address[] memory receivers,
-        uint256[] memory amounts
-    )
+    function changeReceiver(bytes32 planId, address receiver)
         external
         onlyAdmin(planId)
     {
-        _validateReceivers(receivers, amounts);
+        require(receiver != address(0), "FRP: receiver is the zero address");
 
-        uint256[] memory prevAmounts = plansDB.getAmounts(planId);
+        plansDB.setReceiver(planId, receiver);
 
-        require(
-            Arrays.sum(amounts) == Arrays.sum(prevAmounts),
-            "FRP: invalid amounts"
-        );
-
-        plansDB.setReceivers(planId, receivers);
-        plansDB.setAmounts(planId, amounts);
-
-        emit ReceiversChanged(planId, receivers, amounts);
+        emit ReceiverChanged(planId, receiver);
     }
 
     /**
@@ -222,8 +208,8 @@ contract FixedRecurringPlans is FixedRecurringConstants, Initializable {
             address admin,
             uint256 period,
             address token,
-            address[] memory receivers,
-            uint256[] memory amounts
+            uint256 amount,
+            address receiver
         )
     {
         require(exists(planId), "FRP: invalid plan id");
@@ -231,8 +217,8 @@ contract FixedRecurringPlans is FixedRecurringConstants, Initializable {
         admin = plansDB.getAdmin(planId);
         period = plansDB.getPeriod(planId);
         token = tokensRegistry.getLatestAddress(plansDB.getToken(planId));
-        receivers = plansDB.getReceivers(planId);
-        amounts = plansDB.getAmounts(planId);
+        amount = plansDB.getAmount(planId);
+        receiver = plansDB.getReceiver(planId);
     }
 
     /**
@@ -258,27 +244,5 @@ contract FixedRecurringPlans is FixedRecurringConstants, Initializable {
         returns (bool)
     {
         return plansDB.hasPermission(planId, permission, account);
-    }
-
-    /**
-     * @dev Validates receivers and throws if they are invalid.
-     */
-    function _validateReceivers(address[] memory receivers, uint256[] memory amounts)
-        internal
-        pure
-    {
-        require(
-            receivers.length == amounts.length,
-            "FRP: parameters length mismatch"
-        );
-        require(
-            receivers.length > 0 && receivers.length <= MAX_RECEIVERS,
-            "FRP: invalid receivers length"
-        );
-
-        for (uint256 i = 0; i < receivers.length; i++){
-            require(receivers[i] != address(0), "FRP: receiver is zero address");
-            require(amounts[i] != 0, "FRP: amount is zero");
-        }
     }
 }

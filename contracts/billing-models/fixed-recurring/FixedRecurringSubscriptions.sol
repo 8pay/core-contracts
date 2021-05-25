@@ -87,12 +87,18 @@ contract FixedRecurringSubscriptions is FixedRecurringConstants, Initializable {
 
         bytes32 subscriptionId = keccak256(abi.encodePacked(planId, msg.sender, block.timestamp));
 
+        uint256[] memory amounts = new uint256[](1);
+        address[] memory receivers = new address[](1);
+
+        receivers[0] = plansDB.getReceiver(planId);
+        amounts[0] = plansDB.getAmount(planId);
+
         require(
             transfers.transfer(
                 plansDB.getToken(planId),
                 msg.sender,
-                plansDB.getReceivers(planId),
-                plansDB.getAmounts(planId),
+                receivers,
+                amounts,
                 planAdmin,
                 PAYMENT_TYPE,
                 subscriptionId

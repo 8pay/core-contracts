@@ -112,126 +112,49 @@ contract FixedRecurringSubscriptionsManagement is FixedRecurringConstants, Initi
      * since the billing rules are enforces by the plan and the smart contracts.
      */
     function bill(bytes32 planId, bytes32[] memory subscriptionIds) external {
-        require(!Arrays.hasDuplicates(subscriptionIds), "FRSM: duplicate subscription ids");
-
-        uint256[] memory expiries;
-
-        (subscriptionIds, expiries) = _filterBillableSubscriptions(planId, subscriptionIds);
-
-        require(subscriptionIds.length != 0, "FRSM: no billable subscriptions");
-
+        address admin = plansDB.getAdmin(planId);
         uint256 period = plansDB.getPeriod(planId);
-        bool[] memory success = _bill(planId, subscriptionIds);
-
-        for (uint256 i = 0; i < subscriptionIds.length; i++) {
-            if (!success[i]) {
-                emit BillingFailed(planId, subscriptionIds[i]);
-                continue;
-            }
-
-            uint256 cycleStart = expiries[i] + 1;
-
-            subscriptionsDB.setCycleStart(subscriptionIds[i], cycleStart);
-
-            emit Billing(planId, subscriptionIds[i], cycleStart, cycleStart + period - 1);
-        }
-    }
-
-    /**
-     * @dev Executes the actual token transfers for the billings.
-     */
-    function _bill(bytes32 planId, bytes32[] memory subscriptionIds)
-        internal
-        returns (bool[] memory success)
-    {
-        address[] memory senders;
-        address[] memory receivers;
-        uint256[][] memory amounts;
-
-        (
-            senders,
-            receivers,
-            amounts
-        ) = _prepareForTransfers(planId, subscriptionIds);
-
-        return transfers.batchTransfers(
-            plansDB.getToken(planId),
-            senders,
-            receivers,
-            amounts,
-            plansDB.getAdmin(planId),
-            PAYMENT_TYPE,
-            subscriptionIds
-        );
-    }
-
-    /**
-     * @dev Returns the data needed to perform billing transfers.
-     */
-    function _prepareForTransfers(
-        bytes32 planId,
-        bytes32[] memory subscriptionIds
-    )
-        internal
-        view
-        returns (
-            address[] memory senders,
-            address[] memory receivers,
-            uint256[][] memory amounts
-        )
-    {
-        senders = new address[](subscriptionIds.length);
-        amounts = new uint256[][](subscriptionIds.length);
-
-        receivers = plansDB.getReceivers(planId);
-
-        uint256[] memory planAmounts = plansDB.getAmounts(planId);
-
-        for (uint256 i = 0; i < subscriptionIds.length; i++) {
-            senders[i] = subscriptionsDB.getAccount(subscriptionIds[i]);
-            amounts[i] = planAmounts;
-        }
-
-        return (senders, receivers, amounts);
-    }
-
-    /**
-     * @dev Returns a list of billable subscriptions, filtering invalid and the ones
-     * where the current cycle is not over yet.
-     */
-    function _filterBillableSubscriptions(
-        bytes32 planId,
-        bytes32[] memory subscriptionIds
-    )
-        internal
-        view
-        returns (
-            bytes32[] memory filteredSubscriptionIds,
-            uint256[] memory expiries
-        )
-    {
-        uint256 length;
-        uint256 period = plansDB.getPeriod(planId);
-
-        filteredSubscriptionIds = new bytes32[](subscriptionIds.length);
-        expiries = new uint256[](subscriptionIds.length);
+        address token = plansDB.getToken(planId);
+        uint256 amount = plansDB.getAmount(planId);
+        address receiver = plansDB.getReceiver(planId);
 
         for (uint256 i = 0; i < subscriptionIds.length; i++) {
             bytes32 subscriptionPlanId = subscriptionsDB.getPlanId(subscriptionIds[i]);
+            uint256 cycleStart = subscriptionsDB.getCycleStart(subscriptionIds[i]);
 
-            if (subscriptionPlanId == planId) {
-                expiries[length] = subscriptionsDB.getCycleStart(subscriptionIds[i]) + period - 1;
+            if (subscriptionPlanId == planId && cycleStart + period - 1 < block.timestamp) {
+                if (_bill(subscriptionIds[i], token, receiver, amount, admin)) {
+                    subscriptionsDB.setCycleStart(subscriptionIds[i], cycleStart + period);
 
-                if (expiries[length] < block.timestamp) {
-                    filteredSubscriptionIds[length] = subscriptionIds[i];
-                    length++;
+                    emit Billing(planId, subscriptionIds[i], cycleStart + period, cycleStart + period * 2 - 1);
+                } else {
+                    emit BillingFailed(planId, subscriptionIds[i]);
                 }
             }
         }
+    }
 
-        Arrays.shrink(filteredSubscriptionIds, length);
-        Arrays.shrink(expiries, length);
+    /**
+     * @dev Executes the actual token transfer for the billing.
+     */
+    function _bill(bytes32 subscriptionId, address token, address receiver, uint256 amount, address admin)
+        internal
+        returns (bool)
+    {
+        address[] memory receivers = new address[](1);
+        uint256[] memory amounts = new uint256[](1);
 
-        return (filteredSubscriptionIds, expiries);
+        receivers[0] = receiver;
+        amounts[0] = amount;
+
+        return transfers.transfer(
+            token,
+            subscriptionsDB.getAccount(subscriptionId),
+            receivers,
+            amounts,
+            admin,
+            PAYMENT_TYPE,
+            subscriptionId
+        );
     }
 }
