@@ -46,11 +46,11 @@ contract OneTime is Initializable {
      * Both erc20 and eth transfers are supported.
      */
     function send(
-        string memory description,
+        string calldata description,
         address token,
-        address[] memory receivers,
-        uint256[] memory amounts,
-        string memory category,
+        address[] calldata receivers,
+        uint256[] calldata amounts,
+        string calldata category,
         bytes32 tag
     )
         external

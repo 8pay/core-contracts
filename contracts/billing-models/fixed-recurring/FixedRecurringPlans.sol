@@ -88,12 +88,12 @@ contract FixedRecurringPlans is FixedRecurringConstants, Initializable {
      * @dev Creates a new plan.
      */
     function createPlan(
-        string memory name,
+        string calldata name,
         uint256 amount,
         address token,
         uint256 period,
         address receiver,
-        string memory category
+        string calldata category
     )
         external
     {
@@ -160,7 +160,7 @@ contract FixedRecurringPlans is FixedRecurringConstants, Initializable {
      *
      * - caller must be admin of the plan
      */
-    function grantPermission(bytes32 planId, bytes32 permission, address[] memory accounts)
+    function grantPermission(bytes32 planId, bytes32 permission, address[] calldata accounts)
         external
         onlyAdmin(planId)
         validPermission(permission)
@@ -183,7 +183,7 @@ contract FixedRecurringPlans is FixedRecurringConstants, Initializable {
      *
      * - caller must be admin of the plan
      */
-    function revokePermission(bytes32 planId, bytes32 permission, address[] memory accounts)
+    function revokePermission(bytes32 planId, bytes32 permission, address[] calldata accounts)
         external
         onlyAdmin(planId)
         validPermission(permission)

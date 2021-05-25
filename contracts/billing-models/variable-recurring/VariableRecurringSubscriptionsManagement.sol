@@ -89,7 +89,7 @@ contract VariableRecurringSubscriptionsManagement is VariableRecurringConstants,
      *
      * - caller must be the plan's admin or an account with 'TERMINATE' permission.
      */
-    function terminate(bytes32 planId, bytes32[] memory subscriptionIds)
+    function terminate(bytes32 planId, bytes32[] calldata subscriptionIds)
         external
         onlyPrivileged(planId, PERMISSION_TERMINATE)
     {
@@ -116,7 +116,7 @@ contract VariableRecurringSubscriptionsManagement is VariableRecurringConstants,
      *
      * - caller must be the plan's admin or an account with 'BILL' permission
      */
-    function bill(bytes32 planId, bytes32[] memory subscriptionIds, uint256[] memory amounts)
+    function bill(bytes32 planId, bytes32[] calldata subscriptionIds, uint256[] calldata amounts)
         external
         onlyPrivileged(planId, PERMISSION_BILL)
     {

@@ -81,7 +81,7 @@ contract FixedRecurringSubscriptionsManagement is FixedRecurringConstants, Initi
      *
      * - caller must be the plan's admin or an account with 'TERMINATE' permission.
      */
-    function terminate(bytes32 planId, bytes32[] memory subscriptionIds)
+    function terminate(bytes32 planId, bytes32[] calldata subscriptionIds)
         external
         onlyPrivileged(planId, PERMISSION_TERMINATE)
     {
@@ -110,7 +110,7 @@ contract FixedRecurringSubscriptionsManagement is FixedRecurringConstants, Initi
      * It allows further functionalities to be implemented and doesn't cause harm
      * since the billing rules are enforces by the plan and the smart contracts.
      */
-    function bill(bytes32 planId, bytes32[] memory subscriptionIds) external {
+    function bill(bytes32 planId, bytes32[] calldata subscriptionIds) external {
         address admin = plansDB.getAdmin(planId);
         uint256 period = plansDB.getPeriod(planId);
         address token = plansDB.getToken(planId);

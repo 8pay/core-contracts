@@ -58,7 +58,7 @@ abstract contract AccessControl {
      * @dev Initializes access control granting `roles` to the provided `accounts`.
      * The function must be called only once, just after deployment.
      */
-    function initAccessControl(bytes32[] memory roles, address[] memory accounts)
+    function initAccessControl(bytes32[] calldata roles, address[] calldata accounts)
         external
     {
         require(!_initialized, "AccessControl: already initialized");

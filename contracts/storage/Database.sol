@@ -32,7 +32,7 @@ abstract contract Database {
     /**
      * @dev Sets a string `value` on the given `key`.
      */
-    function _setString(bytes32 key, string memory value) internal {
+    function _setString(bytes32 key, string calldata value) internal {
         _stringStorage[key] = value;
     }
 
@@ -46,7 +46,7 @@ abstract contract Database {
     /**
      * @dev Sets a bytes `value` on the given `key`.
      */
-    function _setBytes(bytes32 key, bytes memory value) internal {
+    function _setBytes(bytes32 key, bytes calldata value) internal {
         _bytesStorage[key] = value;
     }
 
@@ -74,49 +74,49 @@ abstract contract Database {
     /**
      * @dev Sets a uint array `value` on the given `key`.
      */
-    function _setUintArray(bytes32 key, uint256[] memory value) internal {
+    function _setUintArray(bytes32 key, uint256[] calldata value) internal {
         _uintArrayStorage[key] = value;
     }
 
     /**
      * @dev Sets a string array `value` on the given `key`.
      */
-    function _setStringArray(bytes32 key, string[] memory value) internal {
+    function _setStringArray(bytes32 key, string[] calldata value) internal {
         _stringArrayStorage[key] = value;
     }
 
     /**
      * @dev Sets an address array `value` on the given `key`.
      */
-    function _setAddressArray(bytes32 key, address[] memory value) internal {
+    function _setAddressArray(bytes32 key, address[] calldata value) internal {
         _addressArrayStorage[key] = value;
     }
 
     /**
      * @dev Sets a bytes array `value` on the given `key`.
      */
-    function _setBytesArray(bytes32 key, bytes[] memory value) internal {
+    function _setBytesArray(bytes32 key, bytes[] calldata value) internal {
         _bytesArrayStorage[key] = value;
     }
 
     /**
      * @dev Sets a bool array `value` on the given `key`.
      */
-    function _setBoolArray(bytes32 key, bool[] memory value) internal {
+    function _setBoolArray(bytes32 key, bool[] calldata value) internal {
         _boolArrayStorage[key] = value;
     }
 
     /**
      * @dev Sets an int array `value` on the given `key`.
      */
-    function _setIntArray(bytes32 key, int256[] memory value) internal {
+    function _setIntArray(bytes32 key, int256[] calldata value) internal {
         _intArrayStorage[key] = value;
     }
 
     /**
      * @dev Sets a bytes32 array `value` on the given `key`.
      */
-    function _setBytes32Array(bytes32 key, bytes32[] memory value) internal {
+    function _setBytes32Array(bytes32 key, bytes32[] calldata value) internal {
         _bytes32ArrayStorage[key] = value;
     }
 
