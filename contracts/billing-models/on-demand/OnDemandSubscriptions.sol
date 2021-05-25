@@ -19,7 +19,7 @@ import { OnDemandConstants } from "./OnDemandConstants.sol";
  * after cancellation.
  */
 contract OnDemandSubscriptions is OnDemandConstants, Initializable {
-    /// @dev Reserved memory slots
+    /// @dev Reserved storage slots
     uint256[50] private __gap;
 
     IOnDemandPlansDatabase public plansDB;

@@ -20,7 +20,7 @@ import { FixedRecurringConstants } from "./FixedRecurringConstants.sol";
  * be granted to other accounts, such as the permission to terminate subscriptions.
  */
 contract FixedRecurringPlans is FixedRecurringConstants, Initializable {
-    /// @dev Reserved memory slots
+    /// @dev Reserved storage slots
     uint256[50] private __gap;
 
     IFixedRecurringPlansDatabase public plansDB;

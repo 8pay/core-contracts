@@ -26,7 +26,7 @@ contract Transfers is ITransfers, Initializable, AccessControl {
     using Address for address payable;
     using SafeERC20 for IERC20;
 
-    /// @dev Reserved memory slots
+    /// @dev Reserved storage slots
     uint256[50] private __gap;
 
     address payable public feeCollector;

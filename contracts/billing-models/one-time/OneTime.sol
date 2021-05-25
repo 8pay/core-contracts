@@ -9,7 +9,7 @@ import { ITransfers } from "../../interfaces/ITransfers.sol";
  * additional parameters such as a description and a tag.
  */
 contract OneTime is Initializable {
-    /// @dev Reserved memory slots
+    /// @dev Reserved storage slots
     uint256[50] private __gap;
 
     ITransfers public transfers;

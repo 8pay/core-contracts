@@ -23,7 +23,7 @@ import { FixedRecurringConstants } from "./FixedRecurringConstants.sol";
  * Subscriptions can be forcefully terminated anytime.
  */
 contract FixedRecurringSubscriptionsManagement is FixedRecurringConstants, Initializable {
-    /// @dev Reserved memory slots
+    /// @dev Reserved storage slots
     uint256[50] private __gap;
 
     IFixedRecurringPlansDatabase public plansDB;

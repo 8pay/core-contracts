@@ -23,7 +23,7 @@ import { OnDemandConstants } from "./OnDemandConstants.sol";
  * Subscriptions can be forcefully terminated anytime.
  */
 contract OnDemandSubscriptionsManagement is OnDemandConstants, Initializable {
-    /// @dev Reserved memory slots
+    /// @dev Reserved storage slots
     uint256[50] private __gap;
 
     IOnDemandPlansDatabase public plansDB;

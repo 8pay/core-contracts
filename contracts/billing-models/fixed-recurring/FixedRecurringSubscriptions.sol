@@ -22,7 +22,7 @@ import { FixedRecurringConstants } from "./FixedRecurringConstants.sol";
  * after cancellation.
  */
 contract FixedRecurringSubscriptions is FixedRecurringConstants, Initializable {
-    /// @dev Reserved memory slots
+    /// @dev Reserved storage slots
     uint256[50] private __gap;
 
     IFixedRecurringPlansDatabase public plansDB;

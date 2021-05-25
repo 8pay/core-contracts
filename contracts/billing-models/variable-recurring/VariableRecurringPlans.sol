@@ -22,7 +22,7 @@ import { VariableRecurringConstants } from "./VariableRecurringConstants.sol";
  *
  */
 contract VariableRecurringPlans is VariableRecurringConstants, Initializable {
-    /// @dev Reserved memory slots
+    /// @dev Reserved storage slots
     uint256[50] private __gap;
 
     IVariableRecurringPlansDatabase public plansDB;
