@@ -239,6 +239,7 @@ contract Transfers is ITransfers, Initializable, AccessControl {
         internal
         returns (bool success)
     {
+        require(sender != address(0), "Transfers: sender is the zero address");
         require(receiver != address(0), "Transfers: receiver is the zero address");
 
         if (msg.value != amount) {
