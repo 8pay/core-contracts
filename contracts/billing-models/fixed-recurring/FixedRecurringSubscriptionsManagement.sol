@@ -141,17 +141,11 @@ contract FixedRecurringSubscriptionsManagement is FixedRecurringConstants, Initi
         internal
         returns (bool)
     {
-        address[] memory receivers = new address[](1);
-        uint256[] memory amounts = new uint256[](1);
-
-        receivers[0] = receiver;
-        amounts[0] = amount;
-
         return transfers.transfer(
             token,
             subscriptionsDB.getAccount(subscriptionId),
-            receivers,
-            amounts,
+            receiver,
+            amount,
             admin,
             PAYMENT_TYPE,
             subscriptionId

@@ -9,7 +9,7 @@ const Role = require('../../data/roles');
 const PaymentType = require('../../data/payment-types');
 
 contract('Transfers', accounts => {
-  const [owner, networkContract, bob, alice, eve, mallory, trent, feeCollector] = accounts;
+  const [owner, networkContract, bob, alice, feeCollector] = accounts;
   const ETH_TOKEN = '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE';
   const feePercentage = new BN(1);
   const rawFeePercentage = '100';
@@ -38,27 +38,21 @@ contract('Transfers', accounts => {
 
   describe('transfers', () => {
     const sender = bob;
-    const receivers = [alice, eve];
-    const amounts = [new BN(400), new BN(600)];
-    const totAmount = amounts.reduce((a, e) => a.add(e), new BN(0));
-    const feePerReceiver = amounts.map(e => e.mul(feePercentage).div(new BN(100)));
-    const totFee = feePerReceiver.reduce((a, e) => a.add(e), new BN(0));
-    const netAmounts = amounts.map((e, i) => e.sub(feePerReceiver[i]));
+    const receiver = alice;
+    const amount = new BN(1000);
+    const fee = amount.mul(feePercentage).div(new BN(100));
+    const netAmount = amount.sub(fee);
 
     describe('ERC20', () => {
       it('should execute an erc20 transfer', async () => {
         await this.token.approve(this.transfers.address, constants.MAX_UINT256, { from: bob });
-        await this.token.transfer(bob, totAmount, { from: owner });
+        await this.token.transfer(bob, amount, { from: owner });
 
         const senderInitialBalance = await this.token.balanceOf(bob);
         const feeCollectorInitialBalance = await this.token.balanceOf(feeCollector);
-        const receiversInitialBalance = [];
+        const receiverInitialBalance = await this.token.balanceOf(receiver);
 
-        for (let i = 0; i < receivers.length; i++) {
-          receiversInitialBalance[i] = await this.token.balanceOf(receivers[i]);
-        }
-
-        const params = [this.token.address, sender, receivers, amounts, bob, PaymentType.ONE_TIME, metadata, { from: networkContract }];
+        const params = [this.token.address, sender, receiver, amount, bob, PaymentType.ONE_TIME, metadata, { from: networkContract }];
         const success = await this.transfers.transfer.call(...params);
 
         expect(success).to.be.equal(true);
@@ -68,8 +62,8 @@ contract('Transfers', accounts => {
         expectEvent(result, 'TransferSuccessful', {
           token: this.token.address,
           sender: sender,
-          receivers: receivers,
-          amounts: amounts,
+          receiver: receiver,
+          amount: amount,
           feePercentage: rawFeePercentage,
           paymentType: PaymentType.ONE_TIME,
           metadata: metadata
@@ -77,18 +71,15 @@ contract('Transfers', accounts => {
 
         const senderFinalBalance = await this.token.balanceOf(sender);
         const feeCollectorFinalBalance = await this.token.balanceOf(feeCollector);
+        const receiverFinalBalance = await this.token.balanceOf(receiver);
 
-        expect(feeCollectorFinalBalance).to.be.bignumber.equal(feeCollectorInitialBalance.add(totFee));
-        expect(senderFinalBalance).to.be.bignumber.equal(senderInitialBalance.sub(totAmount));
-
-        for (let i = 0; i < receivers.length; i++) {
-          const finalBalance = await this.token.balanceOf(receivers[i]);
-          expect(finalBalance).to.be.bignumber.equal(receiversInitialBalance[i].add(netAmounts[i]));
-        }
+        expect(feeCollectorFinalBalance).to.be.bignumber.equal(feeCollectorInitialBalance.add(fee));
+        expect(senderFinalBalance).to.be.bignumber.equal(senderInitialBalance.sub(amount));
+        expect(receiverFinalBalance).to.be.bignumber.equal(receiverInitialBalance.add(netAmount));
       });
 
       it('should return false if not enough balance or allowance', async () => {
-        const params = [this.token.address, sender, receivers, amounts, bob, PaymentType.ONE_TIME, metadata, { from: networkContract }];
+        const params = [this.token.address, sender, receiver, amount, bob, PaymentType.ONE_TIME, metadata, { from: networkContract }];
         const success = await this.transfers.transfer.call(...params);
 
         expect(success).to.be.equal(false);
@@ -98,8 +89,8 @@ contract('Transfers', accounts => {
         expectEvent(result, 'TransferFailed', {
           token: this.token.address,
           sender: sender,
-          receivers: receivers,
-          amounts: amounts,
+          receiver: receiver,
+          amount: amount,
           paymentType: PaymentType.ONE_TIME,
           metadata: metadata
         });
@@ -107,22 +98,20 @@ contract('Transfers', accounts => {
 
       it('reverts if token is not supported or active', async () => {
         await this.token.approve(this.transfers.address, constants.MAX_UINT256, { from: bob });
-        await this.token.transfer(bob, totAmount, { from: owner });
+        await this.token.transfer(bob, amount, { from: owner });
 
         await expectRevert(
           this.transfers.transfer(
-            this.randomToken.address, sender, receivers, amounts, bob, PaymentType.ONE_TIME, metadata, { from: networkContract }
+            this.randomToken.address, sender, receiver, amount, bob, PaymentType.ONE_TIME, metadata, { from: networkContract }
           ),
           'Transfers: inactive or unsupported token'
         );
       });
 
-      it('reverts if zero address in receivers', async () => {
-        const invalidReceivers = receivers.map(() => constants.ZERO_ADDRESS);
-
+      it('reverts if receiver is the zero address', async () => {
         await expectRevert(
           this.transfers.transfer.call(
-            this.token.address, sender, invalidReceivers, amounts, bob, PaymentType.ONE_TIME, metadata, { from: networkContract }
+            this.token.address, sender, constants.ZERO_ADDRESS, amount, bob, PaymentType.ONE_TIME, metadata, { from: networkContract }
           ),
           'Transfers: receiver is the zero address'
         );
@@ -131,59 +120,9 @@ contract('Transfers', accounts => {
       it('reverts if zero address sender', async () => {
         await expectRevert(
           this.transfers.transfer.call(
-            this.token.address, constants.ZERO_ADDRESS, receivers, amounts, bob, PaymentType.ONE_TIME, metadata, { from: networkContract }
+            this.token.address, constants.ZERO_ADDRESS, receiver, amount, bob, PaymentType.ONE_TIME, metadata, { from: networkContract }
           ),
           'Transfers: sender is the zero address'
-        );
-      });
-
-      it('reverts if empty receivers array', async () => {
-        await expectRevert(
-          this.transfers.transfer.call(
-            this.token.address,
-            sender,
-            [],
-            amounts,
-            bob,
-            PaymentType.ONE_TIME,
-            metadata,
-            { from: networkContract }
-          ),
-          'Transfers: no receivers'
-        );
-      });
-
-      it('reverts if empty amounts array', async () => {
-        await expectRevert(
-          this.transfers.transfer.call(
-            this.token.address,
-            sender,
-            receivers,
-            [],
-            bob,
-            PaymentType.ONE_TIME,
-            metadata,
-            { from: networkContract }
-          ),
-          'Transfers: parameters length mismatch'
-        );
-      });
-
-      it('reverts if receivers and amounts arrays length is different', async () => {
-        const invalidAmounts = amounts.slice(0, -1);
-
-        await expectRevert(
-          this.transfers.transfer.call(
-            this.token.address,
-            sender,
-            receivers,
-            invalidAmounts,
-            bob,
-            PaymentType.ONE_TIME,
-            metadata,
-            { from: networkContract }
-          ),
-          'Transfers: parameters length mismatch'
         );
       });
     });
@@ -191,21 +130,17 @@ contract('Transfers', accounts => {
     describe('ETH', () => {
       it('should execute an ETH transfer', async () => {
         const feeCollectorInitialBalance = new BN(await web3.eth.getBalance(feeCollector));
-        const receiversInitialBalance = [];
-
-        for (let i = 0; i < receivers.length; i++) {
-          receiversInitialBalance[i] = new BN(await web3.eth.getBalance(receivers[i]));
-        }
+        const receiverInitialBalance = new BN(await web3.eth.getBalance(receiver));
 
         const params = [
           ETH_TOKEN,
           sender,
-          receivers,
-          amounts,
+          receiver,
+          amount,
           bob,
           PaymentType.ONE_TIME,
           metadata,
-          { from: networkContract, value: totAmount }
+          { from: networkContract, value: amount }
         ];
 
         const success = await this.transfers.transfer.call(...params);
@@ -217,8 +152,8 @@ contract('Transfers', accounts => {
         expectEvent(result, 'TransferSuccessful', {
           token: ETH_TOKEN,
           sender: sender,
-          receivers: receivers,
-          amounts: amounts,
+          receiver: receiver,
+          amount: amount,
           feePercentage: rawFeePercentage,
           paymentType: PaymentType.ONE_TIME,
           metadata: metadata
@@ -226,12 +161,11 @@ contract('Transfers', accounts => {
 
         const feeCollectorFinalBalance = new BN(await web3.eth.getBalance(feeCollector));
 
-        expect(feeCollectorFinalBalance).to.be.bignumber.equal(feeCollectorInitialBalance.add(totFee));
+        expect(feeCollectorFinalBalance).to.be.bignumber.equal(feeCollectorInitialBalance.add(fee));
 
-        for (let i = 0; i < receivers.length; i++) {
-          const finalBalance = new BN(await web3.eth.getBalance(receivers[i]));
-          expect(finalBalance).to.be.bignumber.equal(receiversInitialBalance[i].add(netAmounts[i]));
-        }
+        const receiverFinalBalance = new BN(await web3.eth.getBalance(receiver));
+
+        expect(receiverFinalBalance).to.be.bignumber.equal(receiverInitialBalance.add(netAmount));
       });
 
       it('should return false and send ETH back when executing a transfer with incorrect msg.value', async () => {
@@ -241,8 +175,8 @@ contract('Transfers', accounts => {
         const params = [
           ETH_TOKEN,
           sender,
-          receivers,
-          amounts,
+          receiver,
+          amount,
           bob,
           PaymentType.ONE_TIME,
           metadata,
@@ -261,235 +195,14 @@ contract('Transfers', accounts => {
         expectEvent(result, 'TransferFailed', {
           token: ETH_TOKEN,
           sender: sender,
-          receivers: receivers,
-          amounts: amounts,
+          receiver: receiver,
+          amount: amount,
           paymentType: PaymentType.ONE_TIME,
           metadata: metadata
         });
 
         expect(finalBalance).to.be.bignumber.equal(initialBalance.sub(gasCost));
       });
-
-      it('reverts if empty receivers array', async () => {
-        await expectRevert(
-          this.transfers.transfer.call(ETH_TOKEN, sender, [], amounts, bob, PaymentType.ONE_TIME, metadata, { from: networkContract }),
-          'Transfers: no receivers'
-        );
-      });
-
-      it('reverts if empty amounts array', async () => {
-        await expectRevert(
-          this.transfers.transfer.call(ETH_TOKEN, sender, receivers, [], bob, PaymentType.ONE_TIME, metadata, { from: networkContract }),
-          'Transfers: parameters length mismatch'
-        );
-      });
-
-      it('reverts if receivers and amounts arrays length is different', async () => {
-        const invalidAmounts = amounts.slice(0, -1);
-
-        await expectRevert(
-          this.transfers.transfer.call(
-            ETH_TOKEN,
-            sender,
-            receivers,
-            invalidAmounts,
-            bob,
-            PaymentType.ONE_TIME,
-            metadata,
-            { from: networkContract }
-          ),
-          'Transfers: parameters length mismatch'
-        );
-      });
-    });
-  });
-
-  describe('batch transfers', () => {
-    const senders = [bob, alice];
-    const receivers = [eve, mallory];
-    const amounts = [[new BN(600), new BN(400)], [new BN(700), new BN(300)]];
-    const totAmountPerSender = amounts.map(e => e.reduce((a, c) => a.add(c), new BN(0)));
-    const totAmountPerReceiver = amounts.map(() => new BN(0));
-    amounts.forEach(a => a.forEach((e, i) => { totAmountPerReceiver[i] = totAmountPerReceiver[i].add(e); }));
-    const totFeePerReceiver = totAmountPerReceiver.map(e => e.mul(feePercentage).div(new BN(100)));
-    const totFee = totFeePerReceiver.reduce((a, e) => a.add(e), new BN(0));
-    const netAmountPerReceiver = totAmountPerReceiver.map((e, i) => e.sub(totFeePerReceiver[i]));
-    const batchMetadata = senders.map(() => metadata);
-
-    it('should execute a batch transfer', async () => {
-      const senderInitialBalances = [];
-      const receiverInitialBalances = [];
-
-      for (let i = 0; i < senders.length; i++) {
-        await this.token.transfer(senders[i], totAmountPerSender[i], { from: owner });
-        await this.token.approve(this.transfers.address, totAmountPerSender[i], { from: senders[i] });
-
-        senderInitialBalances[i] = await this.token.balanceOf(senders[i]);
-      }
-
-      for (let i = 0; i < receivers.length; i++) {
-        receiverInitialBalances[i] = await this.token.balanceOf(receivers[i]);
-      }
-
-      const feeCollectorInitialBalance = await this.token.balanceOf(feeCollector);
-
-      const params = [
-        this.token.address,
-        senders,
-        receivers,
-        amounts,
-        constants.ZERO_ADDRESS,
-        PaymentType.ONE_TIME,
-        batchMetadata,
-        { from: networkContract }
-      ];
-
-      const success = await this.transfers.batchTransfers.call(...params);
-
-      expect(success[0]).to.be.equal(true);
-      expect(success[1]).to.be.equal(true);
-
-      const result = await this.transfers.batchTransfers(...params);
-
-      const senderFinalBalances = [];
-      const receiverFinalBalances = [];
-
-      for (let i = 0; i < senders.length; i++) {
-        senderFinalBalances[i] = await this.token.balanceOf(senders[i]);
-      }
-
-      for (let i = 0; i < receivers.length; i++) {
-        receiverFinalBalances[i] = await this.token.balanceOf(receivers[i]);
-      }
-
-      const feeCollectorFinalBalance = await this.token.balanceOf(feeCollector);
-
-      for (let i = 0; i < senders.length; i++) {
-        expectEvent(result, 'TransferSuccessful', {
-          token: this.token.address,
-          sender: senders[i],
-          receivers: receivers,
-          amounts: amounts[i],
-          feePercentage: rawFeePercentage,
-          paymentType: PaymentType.ONE_TIME,
-          metadata: metadata
-        });
-
-        expect(senderFinalBalances[i]).to.be.bignumber.equal(senderInitialBalances[i].sub(totAmountPerSender[i]));
-      }
-
-      for (let i = 0; i < receivers.length; i++) {
-        expect(receiverFinalBalances[i]).to.be.bignumber.equal(receiverInitialBalances[i].add(netAmountPerReceiver[i]));
-      }
-
-      expect(feeCollectorFinalBalance).to.be.bignumber.equal(feeCollectorInitialBalance.add(totFee));
-    });
-
-    it('should execute a batch transfer with failed transfers', async () => {
-      const extraSender = trent;
-      const extraAmounts = [new BN(200), new BN(300)];
-      const senderInitialBalances = [];
-      const receiverInitialBalances = [];
-
-      for (let i = 0; i < senders.length; i++) {
-        await this.token.transfer(senders[i], totAmountPerSender[i], { from: owner });
-        await this.token.approve(this.transfers.address, totAmountPerSender[i], { from: senders[i] });
-
-        senderInitialBalances[i] = await this.token.balanceOf(senders[i]);
-      }
-
-      for (let i = 0; i < receivers.length; i++) {
-        receiverInitialBalances[i] = await this.token.balanceOf(receivers[i]);
-      }
-
-      const extraSenderInitialBalance = await this.token.balanceOf(extraSender);
-      const feeCollectorInitialBalance = await this.token.balanceOf(feeCollector);
-
-      const params = [
-        this.token.address,
-        [...senders, extraSender],
-        receivers,
-        [...amounts, extraAmounts],
-        constants.ZERO_ADDRESS,
-        PaymentType.ONE_TIME,
-        [...batchMetadata, metadata],
-        { from: networkContract }
-      ];
-
-      const success = await this.transfers.batchTransfers.call(...params);
-
-      expect(success[0]).to.be.equal(true);
-      expect(success[1]).to.be.equal(true);
-      expect(success[2]).to.be.equal(false);
-
-      const result = await this.transfers.batchTransfers(...params);
-
-      const senderFinalBalances = [];
-      const receiverFinalBalances = [];
-
-      for (let i = 0; i < senders.length; i++) {
-        senderFinalBalances[i] = await this.token.balanceOf(senders[i]);
-      }
-
-      for (let i = 0; i < receivers.length; i++) {
-        receiverFinalBalances[i] = await this.token.balanceOf(receivers[i]);
-      }
-
-      const extraSenderFinalBalance = await this.token.balanceOf(extraSender);
-      const feeCollectorFinalBalance = await this.token.balanceOf(feeCollector);
-
-      for (let i = 0; i < senders.length; i++) {
-        expectEvent(result, 'TransferSuccessful', {
-          token: this.token.address,
-          sender: senders[i],
-          receivers: receivers,
-          amounts: amounts[i],
-          feePercentage: rawFeePercentage,
-          paymentType: PaymentType.ONE_TIME,
-          metadata: metadata
-        });
-
-        expect(senderFinalBalances[i]).to.be.bignumber.equal(senderInitialBalances[i].sub(totAmountPerSender[i]));
-      }
-
-      for (let i = 0; i < receivers.length; i++) {
-        expect(receiverFinalBalances[i]).to.be.bignumber.equal(receiverInitialBalances[i].add(netAmountPerReceiver[i]));
-      }
-
-      expect(extraSenderFinalBalance).to.be.bignumber.equal(extraSenderInitialBalance);
-      expect(feeCollectorFinalBalance).to.be.bignumber.equal(feeCollectorInitialBalance.add(totFee));
-    });
-
-    it('reverts if empty senders array', async () => {
-      const params = [
-        this.token.address,
-        [],
-        receivers,
-        amounts,
-        constants.ZERO_ADDRESS,
-        PaymentType.ONE_TIME,
-        batchMetadata,
-        { from: networkContract }
-      ];
-
-      await expectRevert(this.transfers.batchTransfers(...params), 'Transfers: no senders');
-    });
-
-    it('reverts if senders and amounts array lenghts do not match', async () => {
-      const invalidAmounts = amounts.slice(0, -1);
-
-      const params = [
-        this.token.address,
-        senders,
-        receivers,
-        invalidAmounts,
-        constants.ZERO_ADDRESS,
-        PaymentType.ONE_TIME,
-        batchMetadata,
-        { from: networkContract }
-      ];
-
-      await expectRevert(this.transfers.batchTransfers(...params), 'Transfers: parameters length mismatch');
     });
   });
 

@@ -68,20 +68,22 @@ contract OneTime is Initializable {
         for (uint i = 0; i < receivers.length; i++) {
             require(receivers[i] != address(0), "OneTime: receiver is the zero address");
             require(amounts[i] != 0, "OneTime: amount is zero");
-        }
 
-        require(
-            transfers.transfer{value: msg.value}(
-                token,
-                msg.sender,
-                receivers,
-                amounts,
-                address(0),
-                PAYMENT_TYPE,
-                bytes32(0)
-            ),
-            "OneTime: transfer failed"
-        );
+            uint256 value = token == ETH_TOKEN ? amounts[i] : 0;
+
+            require(
+                transfers.transfer{value: value}(
+                    token,
+                    msg.sender,
+                    receivers[i],
+                    amounts[i],
+                    address(0),
+                    PAYMENT_TYPE,
+                    bytes32(0)
+                ),
+                "OneTime: transfer failed"
+            );
+        }
 
         emit Payment(msg.sender, tag, token, description, category);
 

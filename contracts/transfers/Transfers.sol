@@ -42,8 +42,8 @@ contract Transfers is ITransfers, Initializable, AccessControl {
     event TransferSuccessful(
         address token,
         address sender,
-        address[] receivers,
-        uint256[] amounts,
+        address receiver,
+        uint256 amount,
         uint256 feePercentage,
         bytes32 paymentType,
         bytes32 metadata
@@ -55,8 +55,8 @@ contract Transfers is ITransfers, Initializable, AccessControl {
     event TransferFailed(
         address token,
         address sender,
-        address[] receivers,
-        uint256[] amounts,
+        address receiver,
+        uint256 amount,
         bytes32 paymentType,
         bytes32 metadata
     );
@@ -120,7 +120,7 @@ contract Transfers is ITransfers, Initializable, AccessControl {
     }
 
     /**
-     * @dev Executes a transfer from one sender to one or multiple receivers.
+     * @dev Executes a transfer from sender to receiver.
      *
      * Requirements:
      *
@@ -129,8 +129,8 @@ contract Transfers is ITransfers, Initializable, AccessControl {
     function transfer(
         address token,
         address sender,
-        address[] memory receivers,
-        uint256[] memory amounts,
+        address receiver,
+        uint256 amount,
         address feeAccount,
         bytes32 paymentType,
         bytes32 metadata
@@ -146,159 +146,33 @@ contract Transfers is ITransfers, Initializable, AccessControl {
         if (token == ETH_TOKEN) {
             return _ethTransfer(
                 sender,
-                receivers,
-                amounts,
+                receiver,
+                amount,
                 feePercentage,
                 paymentType,
                 metadata
             );
         }
 
-        address[] memory batchSenders = new address[](1);
-        uint256[][] memory batchAmounts = new uint256[][](1);
-        bytes32[] memory batchMetadata = new bytes32[](1);
-
-        batchSenders[0] = sender;
-        batchAmounts[0] = amounts;
-        batchMetadata[0] = metadata;
-
-        bool[] memory results = _erc20Transfers(
+        return _erc20Transfer(
             IERC20(token),
-            batchSenders,
-            receivers,
-            batchAmounts,
+            sender,
+            receiver,
+            amount,
             feePercentage,
-            paymentType,
-            batchMetadata
-        );
-
-        return results[0];
-    }
-
-    /**
-     * @dev Executes a batch transfer from multiple senders to one or multiple receivers.
-     *
-     * If `i` is the index of the sender and `j` the index of the receiver, each sender
-     * `senders[i]` will transfer `amounts[i][j]` to `receivers[i]`.
-     *
-     * Requirements:
-     *
-     * - caller must be a network contract
-     */
-    function batchTransfers(
-        address token,
-        address[] memory senders,
-        address[] memory receivers,
-        uint256[][] memory amounts,
-        address feeAccount,
-        bytes32 paymentType,
-        bytes32[] memory metadata
-    )
-        external
-        override
-        onlyRole(NETWORK_CONTRACT_ROLE)
-        returns (bool[] memory success)
-    {
-        require(token != ETH_TOKEN, "Transfers: eth batch transfers are not supported");
-
-        return _erc20Transfers(
-            IERC20(token),
-            senders,
-            receivers,
-            amounts,
-            feeProvider.getFee(feeAccount, paymentType),
             paymentType,
             metadata
         );
     }
 
     /**
-     * @dev Executes erc20 transfers from multiple senders to multiple receivers.
+     * @dev Executes an erc20 transfer.
      */
-    function _erc20Transfers(
+    function _erc20Transfer(
         IERC20 token,
-        address[] memory senders,
-        address[] memory receivers,
-        uint256[][] memory amounts,
-        uint256 feePercentage,
-        bytes32 paymentType,
-        bytes32[] memory metadata
-    )
-        internal
-        returns (bool[] memory success)
-    {
-        require(senders.length != 0, "Transfers: no senders");
-        require(receivers.length != 0, "Transfers: no receivers");
-        require(amounts.length == senders.length, "Transfers: parameters length mismatch");
-        require(senders.length == metadata.length, "Transfers: parameters length mismatch");
-
-        token = IERC20(tokensRegistry.getLatestAddress(address(token)));
-
-        require(
-            tokensRegistry.isActive(address(token)),
-            "Transfers: inactive or unsupported token"
-        );
-
-        uint256 totalFee;
-        uint256[] memory receiverAmounts = new uint256[](receivers.length);
-
-        success = new bool[](senders.length);
-
-        for (uint256 i = 0; i < senders.length; i++) {
-            require(senders[i] != address(0), "Transfers: sender is the zero address");
-            require(amounts[i].length == receivers.length, "Transfers: parameters length mismatch");
-
-            uint256 totalAmount = Arrays.sum(amounts[i]);
-
-            success[i] = _hasEnoughTokens(token, senders[i], totalAmount);
-
-            if (!success[i]) {
-                emit TransferFailed(
-                    address(token),
-                    senders[i],
-                    receivers,
-                    amounts[i],
-                    paymentType,
-                    metadata[i]
-                );
-
-                continue;
-            }
-
-            token.safeTransferFrom(senders[i], address(this), totalAmount);
-
-            for (uint256 j = 0; j < receivers.length; j++) {
-                uint256 fee = _calculateFee(amounts[i][j], feePercentage);
-
-                receiverAmounts[j] += amounts[i][j] - fee;
-                totalFee += fee;
-            }
-
-            emit TransferSuccessful(
-                address(token),
-                senders[i],
-                receivers,
-                amounts[i],
-                feePercentage,
-                paymentType,
-                metadata[i]
-            );
-        }
-
-        _transferTokens(token, receivers, receiverAmounts);
-
-        if (totalFee != 0) {
-            token.safeTransfer(feeCollector, totalFee);
-        }
-    }
-
-    /**
-     * @dev Executes eth transfers from one sender to multiple receivers.
-     */
-    function _ethTransfer(
         address sender,
-        address[] memory receivers,
-        uint256[] memory amounts,
+        address receiver,
+        uint256 amount,
         uint256 feePercentage,
         bytes32 paymentType,
         bytes32 metadata
@@ -306,34 +180,44 @@ contract Transfers is ITransfers, Initializable, AccessControl {
         internal
         returns (bool success)
     {
-        require(receivers.length != 0, "Transfers: no receivers");
-        require(amounts.length == receivers.length, "Transfers: parameters length mismatch");
+        require(sender != address(0), "Transfers: sender is the zero address");
+        require(receiver != address(0), "Transfers: receiver is the zero address");
 
-        if (msg.value != Arrays.sum(amounts)) {
-            payable(msg.sender).sendValue(msg.value);
+        IERC20 latestToken = IERC20(tokensRegistry.getLatestAddress(address(token)));
 
-            emit TransferFailed(ETH_TOKEN, sender, receivers, amounts, paymentType, metadata);
+        require(
+            tokensRegistry.isActive(address(latestToken)),
+            "Transfers: inactive or unsupported token"
+        );
+
+        if (!_hasEnoughTokens(latestToken, sender, amount)) {
+            emit TransferFailed(
+                address(latestToken),
+                sender,
+                receiver,
+                amount,
+                paymentType,
+                metadata
+            );
 
             return false;
         }
 
-        uint256 totalFee = _calculateFee(msg.value, feePercentage);
+        uint256 netAmount = amount;
 
-        for (uint256 i = 0; i < receivers.length; i++) {
-            uint256 netAmount = amounts[i] - _calculateFee(amounts[i], feePercentage);
-
-            payable(receivers[i]).sendValue(netAmount);
+        if (feePercentage != 0) {
+            uint256 fee = _calculateFee(amount, feePercentage);
+            latestToken.safeTransferFrom(sender, feeCollector, fee);
+            netAmount = amount - fee;
         }
 
-        if (totalFee != 0) {
-            feeCollector.sendValue(totalFee);
-        }
+        latestToken.safeTransferFrom(sender, receiver, netAmount);
 
         emit TransferSuccessful(
-            ETH_TOKEN,
+            address(latestToken),
             sender,
-            receivers,
-            amounts,
+            receiver,
+            amount,
             feePercentage,
             paymentType,
             metadata
@@ -343,16 +227,50 @@ contract Transfers is ITransfers, Initializable, AccessControl {
     }
 
     /**
-     * @dev Sends tokens to one or multiple receivers.
+     * @dev Executes an eth transfer.
      */
-    function _transferTokens(IERC20 token, address[] memory receivers, uint256[] memory amounts)
+    function _ethTransfer(
+        address sender,
+        address receiver,
+        uint256 amount,
+        uint256 feePercentage,
+        bytes32 paymentType,
+        bytes32 metadata
+    )
         internal
+        returns (bool success)
     {
-        for (uint256 i = 0; i < receivers.length; i++) {
-            require(receivers[i] != address(0), "Transfers: receiver is the zero address");
+        require(receiver != address(0), "Transfers: receiver is the zero address");
 
-            token.safeTransfer(receivers[i], amounts[i]);
+        if (msg.value != amount) {
+            payable(msg.sender).sendValue(msg.value);
+
+            emit TransferFailed(ETH_TOKEN, sender, receiver, amount, paymentType, metadata);
+
+            return false;
         }
+
+        uint256 netAmount = amount;
+
+        if (feePercentage != 0) {
+            uint256 fee = _calculateFee(amount, feePercentage);
+            feeCollector.sendValue(fee);
+            netAmount = amount - fee;
+        }
+
+        payable(receiver).sendValue(netAmount);
+
+        emit TransferSuccessful(
+            ETH_TOKEN,
+            sender,
+            receiver,
+            amount,
+            feePercentage,
+            paymentType,
+            metadata
+        );
+
+        return true;
     }
 
     /**
