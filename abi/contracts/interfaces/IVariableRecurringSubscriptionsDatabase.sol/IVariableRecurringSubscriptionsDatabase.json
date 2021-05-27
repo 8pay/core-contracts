@@ -1,0 +1,234 @@
+[
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "subscriptionId",
+        "type": "bytes32"
+      }
+    ],
+    "name": "getAccount",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "subscriptionId",
+        "type": "bytes32"
+      }
+    ],
+    "name": "getCancellationRequest",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "subscriptionId",
+        "type": "bytes32"
+      }
+    ],
+    "name": "getCycleStart",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "subscriptionId",
+        "type": "bytes32"
+      }
+    ],
+    "name": "getPlanId",
+    "outputs": [
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "subscriptionId",
+        "type": "bytes32"
+      }
+    ],
+    "name": "getSubscribedAt",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "planId",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      }
+    ],
+    "name": "getSubscriptionId",
+    "outputs": [
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "subscriptionId",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      }
+    ],
+    "name": "setAccount",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "subscriptionId",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "uint256",
+        "name": "cancellationRequest",
+        "type": "uint256"
+      }
+    ],
+    "name": "setCancellationRequest",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "subscriptionId",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "uint256",
+        "name": "cycleStart",
+        "type": "uint256"
+      }
+    ],
+    "name": "setCycleStart",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "subscriptionId",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "planId",
+        "type": "bytes32"
+      }
+    ],
+    "name": "setPlanId",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "subscriptionId",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "uint256",
+        "name": "subscribedAt",
+        "type": "uint256"
+      }
+    ],
+    "name": "setSubscribedAt",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "planId",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "subscriptionId",
+        "type": "bytes32"
+      }
+    ],
+    "name": "setSubscriptionId",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  }
+]

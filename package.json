@@ -30,6 +30,7 @@
     "eslint-plugin-standard": "^4.0.1",
     "ethers": "^5.1.0",
     "hardhat": "^2.1.2",
+    "hardhat-abi-exporter": "^2.2.1",
     "hardhat-contract-sizer": "^2.0.3",
     "hardhat-deploy": "^0.7.4",
     "lodash": "^4.17.15",

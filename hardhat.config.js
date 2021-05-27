@@ -3,6 +3,7 @@ require('@nomiclabs/hardhat-truffle5');
 require('@nomiclabs/hardhat-web3');
 require('@openzeppelin/hardhat-upgrades');
 require('hardhat-deploy');
+require('hardhat-abi-exporter');
 require('hardhat-contract-sizer');
 require('solidity-coverage');
 require('dotenv').config();
