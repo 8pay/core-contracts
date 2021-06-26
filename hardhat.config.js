@@ -33,7 +33,7 @@ module.exports = {
   },
   namedAccounts: {
     deployer: 0,
-    governance: 1,
+    multiSigWallet: '0x5B848132d3a0111d4daB7060b6051961013C71c7',
     feeCollector: 2
   }
 };

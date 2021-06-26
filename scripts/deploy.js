@@ -4,14 +4,14 @@ const tokens = require('../data/tokens');
 const baseFees = require('../data/base-fees');
 
 async function main () {
-  const { governance, feeCollector } = await getNamedAccounts();
+  const { multiSigWallet, feeCollector } = await getNamedAccounts();
 
   /* Tokens registry */
   const TokensRegistry = await ethers.getContractFactory('TokensRegistry');
   const tokensRegistry = await TokensRegistry.deploy(tokens[network.name]);
 
   await tokensRegistry.deployed();
-  await tokensRegistry.initAccessControl([Role.OWNER], [governance]);
+  await tokensRegistry.initAccessControl([Role.OWNER], [multiSigWallet]);
 
   console.log(`TokensRegistry: ${tokensRegistry.address}`);
 
@@ -20,7 +20,7 @@ async function main () {
   const feeProvider = await FeeProvider.deploy(Object.keys(baseFees), Object.values(baseFees));
 
   await feeProvider.deployed();
-  await feeProvider.initAccessControl([Role.OWNER], [governance]);
+  await feeProvider.initAccessControl([Role.OWNER], [multiSigWallet]);
 
   console.log(`FeeProvider: ${feeProvider.address}`);
 
@@ -85,12 +85,12 @@ async function main () {
 
   await fixedRecurringPlansDatabase.initAccessControl(
     [Role.OWNER, Role.NETWORK_CONTRACT],
-    [governance, fixedRecurringPlans.address]
+    [multiSigWallet, fixedRecurringPlans.address]
   );
 
   await fixedRecurringSubscriptionsDatabase.initAccessControl(
     [Role.OWNER, Role.NETWORK_CONTRACT, Role.NETWORK_CONTRACT],
-    [governance, fixedRecurringSubscriptions.address, fixedRecurringSubscriptionsManagement.address]
+    [multiSigWallet, fixedRecurringSubscriptions.address, fixedRecurringSubscriptionsManagement.address]
   );
 
   /* Variable Recurring */
@@ -134,12 +134,12 @@ async function main () {
 
   await variableRecurringPlansDatabase.initAccessControl(
     [Role.OWNER, Role.NETWORK_CONTRACT],
-    [governance, variableRecurringPlans.address]
+    [multiSigWallet, variableRecurringPlans.address]
   );
 
   await variableRecurringSubscriptionsDatabase.initAccessControl(
     [Role.OWNER, Role.NETWORK_CONTRACT, Role.NETWORK_CONTRACT],
-    [governance, variableRecurringSubscriptions.address, variableRecurringSubscriptionsManagement.address]
+    [multiSigWallet, variableRecurringSubscriptions.address, variableRecurringSubscriptionsManagement.address]
   );
 
   /* On Demand */
@@ -183,12 +183,12 @@ async function main () {
 
   await onDemandPlansDatabase.initAccessControl(
     [Role.OWNER, Role.NETWORK_CONTRACT],
-    [governance, onDemandPlans.address]
+    [multiSigWallet, onDemandPlans.address]
   );
 
   await onDemandSubscriptionsDatabase.initAccessControl(
     [Role.OWNER, Role.NETWORK_CONTRACT, Role.NETWORK_CONTRACT],
-    [governance, onDemandSubscriptions.address, onDemandSubscriptionsManagement.address]
+    [multiSigWallet, onDemandSubscriptions.address, onDemandSubscriptionsManagement.address]
   );
 
   /* Setup Transfers access control */
@@ -202,7 +202,7 @@ async function main () {
       Role.NETWORK_CONTRACT
     ],
     [
-      governance,
+      multiSigWallet,
       oneTime.address,
       fixedRecurringSubscriptions.address,
       fixedRecurringSubscriptionsManagement.address,
@@ -211,8 +211,8 @@ async function main () {
     ]
   );
 
-  /* Transfer upgradability rights to governance */
-  upgrades.admin.transferProxyAdminOwnership(governance);
+  /* Transfer upgradability rights to multiSigWallet */
+  upgrades.admin.transferProxyAdminOwnership(multiSigWallet);
 }
 
 main()
