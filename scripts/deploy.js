@@ -212,7 +212,7 @@ async function main () {
   );
 
   /* Transfer upgradability rights to multiSigWallet */
-  upgrades.admin.transferProxyAdminOwnership(multiSigWallet);
+  await upgrades.admin.transferProxyAdminOwnership(multiSigWallet);
 }
 
 main()
