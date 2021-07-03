@@ -33,7 +33,13 @@ module.exports = {
   },
   namedAccounts: {
     deployer: 0,
-    multiSigWallet: '0x5B848132d3a0111d4daB7060b6051961013C71c7',
-    feeCollector: 2
+    multiSigWallet: {
+      default: 1,
+      private: '0xf08bce380df0D06C890eb6668D72bE9512F29092'
+    },
+    feeCollector: {
+      default: 2,
+      private: '0xe17C7A6ae970437e36785a77899D234Bc9eB1f39'
+    }
   }
 };
