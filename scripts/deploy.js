@@ -26,11 +26,12 @@ async function main () {
 
   /* Transfers */
   const Transfers = await ethers.getContractFactory('Transfers');
-  const transfers = await upgrades.deployProxy(Transfers, [
-    tokensRegistry.address,
-    feeProvider.address,
-    feeCollector
-  ]);
+  /* Allow unsafe deletegatecall (false positive) */
+  const transfers = await upgrades.deployProxy(
+    Transfers,
+    [tokensRegistry.address, feeProvider.address, feeCollector],
+    { unsafeAllow: ['delegatecall'] }
+  );
 
   await transfers.deployed();
 
