@@ -6,3 +6,6 @@ coverage.json
 # Hardhat
 cache
 artifacts
+
+# OpenZeppelin
+.openzeppelin/unknown-*.json
