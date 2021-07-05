@@ -35,10 +35,12 @@ module.exports = {
     deployer: 0,
     multiSigWallet: {
       default: 1,
+      bsc: '0xab8Fb12848Fb67def3376116Fbfa06eB1A2Dd06e',
       private: '0xf08bce380df0D06C890eb6668D72bE9512F29092'
     },
     feeCollector: {
       default: 2,
+      bsc: '0xD8BEC82Dd5C0FE69f012de6660C4a44d63b786BD',
       private: '0xe17C7A6ae970437e36785a77899D234Bc9eB1f39'
     }
   }
