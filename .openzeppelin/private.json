@@ -1,0 +1,1913 @@
+{
+  "manifestVersion": "3.1",
+  "impls": {
+    "2f4029ccfc0f6e3bded85e557218bfbcdef6ef305b9c747418abb9c8b5159fb7": {
+      "address": "0x039c75CDd0021F4299fEEFb85d2a25Db0D9D8E04",
+      "txHash": "0xe22945c152e9092dc33edbd3e5dfbc65107582f47450fa5cf439b4a504d68118",
+      "layout": {
+        "storage": [
+          {
+            "contract": "Initializable",
+            "label": "_initialized",
+            "type": "t_bool",
+            "src": "@openzeppelin\\contracts\\proxy\\utils\\Initializable.sol:23"
+          },
+          {
+            "contract": "Initializable",
+            "label": "_initializing",
+            "type": "t_bool",
+            "src": "@openzeppelin\\contracts\\proxy\\utils\\Initializable.sol:28"
+          },
+          {
+            "contract": "AccessControl",
+            "label": "_initialized",
+            "type": "t_bool",
+            "src": "contracts\\access\\AccessControl.sol:26"
+          },
+          {
+            "contract": "AccessControl",
+            "label": "_roles",
+            "type": "t_mapping(t_bytes32,t_struct(RoleData)1206_storage)",
+            "src": "contracts\\access\\AccessControl.sol:27"
+          },
+          {
+            "contract": "Transfers",
+            "label": "__gap",
+            "type": "t_array(t_uint256)50_storage",
+            "src": "contracts\\transfers\\Transfers.sol:30"
+          },
+          {
+            "contract": "Transfers",
+            "label": "feeCollector",
+            "type": "t_address_payable",
+            "src": "contracts\\transfers\\Transfers.sol:32"
+          },
+          {
+            "contract": "Transfers",
+            "label": "tokensRegistry",
+            "type": "t_contract(ITokensRegistry)8484",
+            "src": "contracts\\transfers\\Transfers.sol:33"
+          },
+          {
+            "contract": "Transfers",
+            "label": "feeProvider",
+            "type": "t_contract(IFeeProvider)8088",
+            "src": "contracts\\transfers\\Transfers.sol:34"
+          }
+        ],
+        "types": {
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]"
+          },
+          "t_uint256": {
+            "label": "uint256"
+          },
+          "t_address_payable": {
+            "label": "address payable"
+          },
+          "t_contract(ITokensRegistry)8484": {
+            "label": "contract ITokensRegistry"
+          },
+          "t_contract(IFeeProvider)8088": {
+            "label": "contract IFeeProvider"
+          },
+          "t_bool": {
+            "label": "bool"
+          },
+          "t_mapping(t_bytes32,t_struct(RoleData)1206_storage)": {
+            "label": "mapping(bytes32 => struct AccessControl.RoleData)"
+          },
+          "t_bytes32": {
+            "label": "bytes32"
+          },
+          "t_struct(RoleData)1206_storage": {
+            "label": "struct AccessControl.RoleData",
+            "members": [
+              {
+                "label": "members",
+                "type": "t_mapping(t_address,t_bool)"
+              }
+            ]
+          },
+          "t_mapping(t_address,t_bool)": {
+            "label": "mapping(address => bool)"
+          },
+          "t_address": {
+            "label": "address"
+          }
+        }
+      }
+    },
+    "1b7885be3061f9da08c0dfae19c6d4e3f25bbcc025133d0d976b6db2e2279cad": {
+      "address": "0x271FCd657158CB9aA0C665aDd0b7464cFdB2C724",
+      "txHash": "0xacf7de20255ef6151dc5b24b8057b92dee58770cd41ab9d88bf3c6b786e91579",
+      "layout": {
+        "storage": [
+          {
+            "contract": "Initializable",
+            "label": "_initialized",
+            "type": "t_bool",
+            "src": "@openzeppelin\\contracts\\proxy\\utils\\Initializable.sol:23"
+          },
+          {
+            "contract": "Initializable",
+            "label": "_initializing",
+            "type": "t_bool",
+            "src": "@openzeppelin\\contracts\\proxy\\utils\\Initializable.sol:28"
+          },
+          {
+            "contract": "OneTime",
+            "label": "__gap",
+            "type": "t_array(t_uint256)50_storage",
+            "src": "contracts\\billing-models\\one-time\\OneTime.sol:13"
+          },
+          {
+            "contract": "OneTime",
+            "label": "transfers",
+            "type": "t_contract(ITransfers)8506",
+            "src": "contracts\\billing-models\\one-time\\OneTime.sol:15"
+          }
+        ],
+        "types": {
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]"
+          },
+          "t_uint256": {
+            "label": "uint256"
+          },
+          "t_contract(ITransfers)8506": {
+            "label": "contract ITransfers"
+          },
+          "t_bool": {
+            "label": "bool"
+          }
+        }
+      }
+    },
+    "8536f31a5f10aff9516431061c26f7514df9627326d11256f2f688717fb907c5": {
+      "address": "0x06ED9564114086F8ce6ef72356E1c15ca7CCF3B3",
+      "txHash": "0x637e237da81b4a1bf955eff5be914731b8e0a59e227ee3ac249be21f892d99d3",
+      "layout": {
+        "storage": [
+          {
+            "contract": "Database",
+            "label": "_uintStorage",
+            "type": "t_mapping(t_bytes32,t_uint256)",
+            "src": "contracts\\storage\\Database.sol:9"
+          },
+          {
+            "contract": "Database",
+            "label": "_stringStorage",
+            "type": "t_mapping(t_bytes32,t_string_storage)",
+            "src": "contracts\\storage\\Database.sol:10"
+          },
+          {
+            "contract": "Database",
+            "label": "_addressStorage",
+            "type": "t_mapping(t_bytes32,t_address)",
+            "src": "contracts\\storage\\Database.sol:11"
+          },
+          {
+            "contract": "Database",
+            "label": "_bytesStorage",
+            "type": "t_mapping(t_bytes32,t_bytes_storage)",
+            "src": "contracts\\storage\\Database.sol:12"
+          },
+          {
+            "contract": "Database",
+            "label": "_boolStorage",
+            "type": "t_mapping(t_bytes32,t_bool)",
+            "src": "contracts\\storage\\Database.sol:13"
+          },
+          {
+            "contract": "Database",
+            "label": "_intStorage",
+            "type": "t_mapping(t_bytes32,t_int256)",
+            "src": "contracts\\storage\\Database.sol:14"
+          },
+          {
+            "contract": "Database",
+            "label": "_bytes32Storage",
+            "type": "t_mapping(t_bytes32,t_bytes32)",
+            "src": "contracts\\storage\\Database.sol:15"
+          },
+          {
+            "contract": "Database",
+            "label": "_uintArrayStorage",
+            "type": "t_mapping(t_bytes32,t_array(t_uint256)dyn_storage)",
+            "src": "contracts\\storage\\Database.sol:17"
+          },
+          {
+            "contract": "Database",
+            "label": "_stringArrayStorage",
+            "type": "t_mapping(t_bytes32,t_array(t_string_storage)dyn_storage)",
+            "src": "contracts\\storage\\Database.sol:18"
+          },
+          {
+            "contract": "Database",
+            "label": "_addressArrayStorage",
+            "type": "t_mapping(t_bytes32,t_array(t_address)dyn_storage)",
+            "src": "contracts\\storage\\Database.sol:19"
+          },
+          {
+            "contract": "Database",
+            "label": "_bytesArrayStorage",
+            "type": "t_mapping(t_bytes32,t_array(t_bytes_storage)dyn_storage)",
+            "src": "contracts\\storage\\Database.sol:20"
+          },
+          {
+            "contract": "Database",
+            "label": "_boolArrayStorage",
+            "type": "t_mapping(t_bytes32,t_array(t_bool)dyn_storage)",
+            "src": "contracts\\storage\\Database.sol:21"
+          },
+          {
+            "contract": "Database",
+            "label": "_intArrayStorage",
+            "type": "t_mapping(t_bytes32,t_array(t_int256)dyn_storage)",
+            "src": "contracts\\storage\\Database.sol:22"
+          },
+          {
+            "contract": "Database",
+            "label": "_bytes32ArrayStorage",
+            "type": "t_mapping(t_bytes32,t_array(t_bytes32)dyn_storage)",
+            "src": "contracts\\storage\\Database.sol:23"
+          },
+          {
+            "contract": "AccessControl",
+            "label": "_initialized",
+            "type": "t_bool",
+            "src": "contracts\\access\\AccessControl.sol:26"
+          },
+          {
+            "contract": "AccessControl",
+            "label": "_roles",
+            "type": "t_mapping(t_bytes32,t_struct(RoleData)1206_storage)",
+            "src": "contracts\\access\\AccessControl.sol:27"
+          }
+        ],
+        "types": {
+          "t_bool": {
+            "label": "bool"
+          },
+          "t_mapping(t_bytes32,t_struct(RoleData)1206_storage)": {
+            "label": "mapping(bytes32 => struct AccessControl.RoleData)"
+          },
+          "t_bytes32": {
+            "label": "bytes32"
+          },
+          "t_struct(RoleData)1206_storage": {
+            "label": "struct AccessControl.RoleData",
+            "members": [
+              {
+                "label": "members",
+                "type": "t_mapping(t_address,t_bool)"
+              }
+            ]
+          },
+          "t_mapping(t_address,t_bool)": {
+            "label": "mapping(address => bool)"
+          },
+          "t_address": {
+            "label": "address"
+          },
+          "t_mapping(t_bytes32,t_uint256)": {
+            "label": "mapping(bytes32 => uint256)"
+          },
+          "t_uint256": {
+            "label": "uint256"
+          },
+          "t_mapping(t_bytes32,t_string_storage)": {
+            "label": "mapping(bytes32 => string)"
+          },
+          "t_string_storage": {
+            "label": "string"
+          },
+          "t_mapping(t_bytes32,t_address)": {
+            "label": "mapping(bytes32 => address)"
+          },
+          "t_mapping(t_bytes32,t_bytes_storage)": {
+            "label": "mapping(bytes32 => bytes)"
+          },
+          "t_bytes_storage": {
+            "label": "bytes"
+          },
+          "t_mapping(t_bytes32,t_bool)": {
+            "label": "mapping(bytes32 => bool)"
+          },
+          "t_mapping(t_bytes32,t_int256)": {
+            "label": "mapping(bytes32 => int256)"
+          },
+          "t_int256": {
+            "label": "int256"
+          },
+          "t_mapping(t_bytes32,t_bytes32)": {
+            "label": "mapping(bytes32 => bytes32)"
+          },
+          "t_mapping(t_bytes32,t_array(t_uint256)dyn_storage)": {
+            "label": "mapping(bytes32 => uint256[])"
+          },
+          "t_array(t_uint256)dyn_storage": {
+            "label": "uint256[]"
+          },
+          "t_mapping(t_bytes32,t_array(t_string_storage)dyn_storage)": {
+            "label": "mapping(bytes32 => string[])"
+          },
+          "t_array(t_string_storage)dyn_storage": {
+            "label": "string[]"
+          },
+          "t_mapping(t_bytes32,t_array(t_address)dyn_storage)": {
+            "label": "mapping(bytes32 => address[])"
+          },
+          "t_array(t_address)dyn_storage": {
+            "label": "address[]"
+          },
+          "t_mapping(t_bytes32,t_array(t_bytes_storage)dyn_storage)": {
+            "label": "mapping(bytes32 => bytes[])"
+          },
+          "t_array(t_bytes_storage)dyn_storage": {
+            "label": "bytes[]"
+          },
+          "t_mapping(t_bytes32,t_array(t_bool)dyn_storage)": {
+            "label": "mapping(bytes32 => bool[])"
+          },
+          "t_array(t_bool)dyn_storage": {
+            "label": "bool[]"
+          },
+          "t_mapping(t_bytes32,t_array(t_int256)dyn_storage)": {
+            "label": "mapping(bytes32 => int256[])"
+          },
+          "t_array(t_int256)dyn_storage": {
+            "label": "int256[]"
+          },
+          "t_mapping(t_bytes32,t_array(t_bytes32)dyn_storage)": {
+            "label": "mapping(bytes32 => bytes32[])"
+          },
+          "t_array(t_bytes32)dyn_storage": {
+            "label": "bytes32[]"
+          }
+        }
+      }
+    },
+    "e4b5278ea9053b0bb349bb78355f27e069c49928ee4cd0116c1d21bf605b2fa5": {
+      "address": "0x9074733DdE2229eC88Fba02562393Ef870C2fDc5",
+      "txHash": "0x2dffc16f630188f7370e7b05501981a77b5c66c1e7a3df960d2117a1ae89f57b",
+      "layout": {
+        "storage": [
+          {
+            "contract": "Database",
+            "label": "_uintStorage",
+            "type": "t_mapping(t_bytes32,t_uint256)",
+            "src": "contracts\\storage\\Database.sol:9"
+          },
+          {
+            "contract": "Database",
+            "label": "_stringStorage",
+            "type": "t_mapping(t_bytes32,t_string_storage)",
+            "src": "contracts\\storage\\Database.sol:10"
+          },
+          {
+            "contract": "Database",
+            "label": "_addressStorage",
+            "type": "t_mapping(t_bytes32,t_address)",
+            "src": "contracts\\storage\\Database.sol:11"
+          },
+          {
+            "contract": "Database",
+            "label": "_bytesStorage",
+            "type": "t_mapping(t_bytes32,t_bytes_storage)",
+            "src": "contracts\\storage\\Database.sol:12"
+          },
+          {
+            "contract": "Database",
+            "label": "_boolStorage",
+            "type": "t_mapping(t_bytes32,t_bool)",
+            "src": "contracts\\storage\\Database.sol:13"
+          },
+          {
+            "contract": "Database",
+            "label": "_intStorage",
+            "type": "t_mapping(t_bytes32,t_int256)",
+            "src": "contracts\\storage\\Database.sol:14"
+          },
+          {
+            "contract": "Database",
+            "label": "_bytes32Storage",
+            "type": "t_mapping(t_bytes32,t_bytes32)",
+            "src": "contracts\\storage\\Database.sol:15"
+          },
+          {
+            "contract": "Database",
+            "label": "_uintArrayStorage",
+            "type": "t_mapping(t_bytes32,t_array(t_uint256)dyn_storage)",
+            "src": "contracts\\storage\\Database.sol:17"
+          },
+          {
+            "contract": "Database",
+            "label": "_stringArrayStorage",
+            "type": "t_mapping(t_bytes32,t_array(t_string_storage)dyn_storage)",
+            "src": "contracts\\storage\\Database.sol:18"
+          },
+          {
+            "contract": "Database",
+            "label": "_addressArrayStorage",
+            "type": "t_mapping(t_bytes32,t_array(t_address)dyn_storage)",
+            "src": "contracts\\storage\\Database.sol:19"
+          },
+          {
+            "contract": "Database",
+            "label": "_bytesArrayStorage",
+            "type": "t_mapping(t_bytes32,t_array(t_bytes_storage)dyn_storage)",
+            "src": "contracts\\storage\\Database.sol:20"
+          },
+          {
+            "contract": "Database",
+            "label": "_boolArrayStorage",
+            "type": "t_mapping(t_bytes32,t_array(t_bool)dyn_storage)",
+            "src": "contracts\\storage\\Database.sol:21"
+          },
+          {
+            "contract": "Database",
+            "label": "_intArrayStorage",
+            "type": "t_mapping(t_bytes32,t_array(t_int256)dyn_storage)",
+            "src": "contracts\\storage\\Database.sol:22"
+          },
+          {
+            "contract": "Database",
+            "label": "_bytes32ArrayStorage",
+            "type": "t_mapping(t_bytes32,t_array(t_bytes32)dyn_storage)",
+            "src": "contracts\\storage\\Database.sol:23"
+          },
+          {
+            "contract": "AccessControl",
+            "label": "_initialized",
+            "type": "t_bool",
+            "src": "contracts\\access\\AccessControl.sol:26"
+          },
+          {
+            "contract": "AccessControl",
+            "label": "_roles",
+            "type": "t_mapping(t_bytes32,t_struct(RoleData)1206_storage)",
+            "src": "contracts\\access\\AccessControl.sol:27"
+          }
+        ],
+        "types": {
+          "t_bool": {
+            "label": "bool"
+          },
+          "t_mapping(t_bytes32,t_struct(RoleData)1206_storage)": {
+            "label": "mapping(bytes32 => struct AccessControl.RoleData)"
+          },
+          "t_bytes32": {
+            "label": "bytes32"
+          },
+          "t_struct(RoleData)1206_storage": {
+            "label": "struct AccessControl.RoleData",
+            "members": [
+              {
+                "label": "members",
+                "type": "t_mapping(t_address,t_bool)"
+              }
+            ]
+          },
+          "t_mapping(t_address,t_bool)": {
+            "label": "mapping(address => bool)"
+          },
+          "t_address": {
+            "label": "address"
+          },
+          "t_mapping(t_bytes32,t_uint256)": {
+            "label": "mapping(bytes32 => uint256)"
+          },
+          "t_uint256": {
+            "label": "uint256"
+          },
+          "t_mapping(t_bytes32,t_string_storage)": {
+            "label": "mapping(bytes32 => string)"
+          },
+          "t_string_storage": {
+            "label": "string"
+          },
+          "t_mapping(t_bytes32,t_address)": {
+            "label": "mapping(bytes32 => address)"
+          },
+          "t_mapping(t_bytes32,t_bytes_storage)": {
+            "label": "mapping(bytes32 => bytes)"
+          },
+          "t_bytes_storage": {
+            "label": "bytes"
+          },
+          "t_mapping(t_bytes32,t_bool)": {
+            "label": "mapping(bytes32 => bool)"
+          },
+          "t_mapping(t_bytes32,t_int256)": {
+            "label": "mapping(bytes32 => int256)"
+          },
+          "t_int256": {
+            "label": "int256"
+          },
+          "t_mapping(t_bytes32,t_bytes32)": {
+            "label": "mapping(bytes32 => bytes32)"
+          },
+          "t_mapping(t_bytes32,t_array(t_uint256)dyn_storage)": {
+            "label": "mapping(bytes32 => uint256[])"
+          },
+          "t_array(t_uint256)dyn_storage": {
+            "label": "uint256[]"
+          },
+          "t_mapping(t_bytes32,t_array(t_string_storage)dyn_storage)": {
+            "label": "mapping(bytes32 => string[])"
+          },
+          "t_array(t_string_storage)dyn_storage": {
+            "label": "string[]"
+          },
+          "t_mapping(t_bytes32,t_array(t_address)dyn_storage)": {
+            "label": "mapping(bytes32 => address[])"
+          },
+          "t_array(t_address)dyn_storage": {
+            "label": "address[]"
+          },
+          "t_mapping(t_bytes32,t_array(t_bytes_storage)dyn_storage)": {
+            "label": "mapping(bytes32 => bytes[])"
+          },
+          "t_array(t_bytes_storage)dyn_storage": {
+            "label": "bytes[]"
+          },
+          "t_mapping(t_bytes32,t_array(t_bool)dyn_storage)": {
+            "label": "mapping(bytes32 => bool[])"
+          },
+          "t_array(t_bool)dyn_storage": {
+            "label": "bool[]"
+          },
+          "t_mapping(t_bytes32,t_array(t_int256)dyn_storage)": {
+            "label": "mapping(bytes32 => int256[])"
+          },
+          "t_array(t_int256)dyn_storage": {
+            "label": "int256[]"
+          },
+          "t_mapping(t_bytes32,t_array(t_bytes32)dyn_storage)": {
+            "label": "mapping(bytes32 => bytes32[])"
+          },
+          "t_array(t_bytes32)dyn_storage": {
+            "label": "bytes32[]"
+          }
+        }
+      }
+    },
+    "ab8bd9def12c42470e7271d96970a3f4f0647f3fd195a006f7b205f2ab6583fe": {
+      "address": "0xa17f9191AF81B5b14E33e389f8a5130d59Bd054A",
+      "txHash": "0x52c06d17983d76d8d69f54634499d343e721317dca9b0b64318e50ad9496c934",
+      "layout": {
+        "storage": [
+          {
+            "contract": "Initializable",
+            "label": "_initialized",
+            "type": "t_bool",
+            "src": "@openzeppelin\\contracts\\proxy\\utils\\Initializable.sol:23"
+          },
+          {
+            "contract": "Initializable",
+            "label": "_initializing",
+            "type": "t_bool",
+            "src": "@openzeppelin\\contracts\\proxy\\utils\\Initializable.sol:28"
+          },
+          {
+            "contract": "FixedRecurringPlans",
+            "label": "__gap",
+            "type": "t_array(t_uint256)50_storage",
+            "src": "contracts\\billing-models\\fixed-recurring\\FixedRecurringPlans.sol:24"
+          },
+          {
+            "contract": "FixedRecurringPlans",
+            "label": "plansDB",
+            "type": "t_contract(IFixedRecurringPlansDatabase)8183",
+            "src": "contracts\\billing-models\\fixed-recurring\\FixedRecurringPlans.sol:26"
+          },
+          {
+            "contract": "FixedRecurringPlans",
+            "label": "tokensRegistry",
+            "type": "t_contract(ITokensRegistry)8484",
+            "src": "contracts\\billing-models\\fixed-recurring\\FixedRecurringPlans.sol:27"
+          }
+        ],
+        "types": {
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]"
+          },
+          "t_uint256": {
+            "label": "uint256"
+          },
+          "t_contract(IFixedRecurringPlansDatabase)8183": {
+            "label": "contract IFixedRecurringPlansDatabase"
+          },
+          "t_contract(ITokensRegistry)8484": {
+            "label": "contract ITokensRegistry"
+          },
+          "t_bool": {
+            "label": "bool"
+          }
+        }
+      }
+    },
+    "ee514cf6a26acb623306436e9e376b0235e1f0901e0081a4f586eab1c18c3ca6": {
+      "address": "0x8393a271757f1EE1E55d8FFcBde325249A86a64a",
+      "txHash": "0x652b50d8d5eba5bac12a0ab8bdb1b5061e2cd477b52579c275cd5607e1d9d5f5",
+      "layout": {
+        "storage": [
+          {
+            "contract": "Initializable",
+            "label": "_initialized",
+            "type": "t_bool",
+            "src": "@openzeppelin\\contracts\\proxy\\utils\\Initializable.sol:23"
+          },
+          {
+            "contract": "Initializable",
+            "label": "_initializing",
+            "type": "t_bool",
+            "src": "@openzeppelin\\contracts\\proxy\\utils\\Initializable.sol:28"
+          },
+          {
+            "contract": "FixedRecurringSubscriptions",
+            "label": "__gap",
+            "type": "t_array(t_uint256)50_storage",
+            "src": "contracts\\billing-models\\fixed-recurring\\FixedRecurringSubscriptions.sol:26"
+          },
+          {
+            "contract": "FixedRecurringSubscriptions",
+            "label": "plansDB",
+            "type": "t_contract(IFixedRecurringPlansDatabase)8183",
+            "src": "contracts\\billing-models\\fixed-recurring\\FixedRecurringSubscriptions.sol:28"
+          },
+          {
+            "contract": "FixedRecurringSubscriptions",
+            "label": "subscriptionsDB",
+            "type": "t_contract(IFixedRecurringSubscriptionsDatabase)8260",
+            "src": "contracts\\billing-models\\fixed-recurring\\FixedRecurringSubscriptions.sol:29"
+          },
+          {
+            "contract": "FixedRecurringSubscriptions",
+            "label": "transfers",
+            "type": "t_contract(ITransfers)8506",
+            "src": "contracts\\billing-models\\fixed-recurring\\FixedRecurringSubscriptions.sol:30"
+          }
+        ],
+        "types": {
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]"
+          },
+          "t_uint256": {
+            "label": "uint256"
+          },
+          "t_contract(IFixedRecurringPlansDatabase)8183": {
+            "label": "contract IFixedRecurringPlansDatabase"
+          },
+          "t_contract(IFixedRecurringSubscriptionsDatabase)8260": {
+            "label": "contract IFixedRecurringSubscriptionsDatabase"
+          },
+          "t_contract(ITransfers)8506": {
+            "label": "contract ITransfers"
+          },
+          "t_bool": {
+            "label": "bool"
+          }
+        }
+      }
+    },
+    "3cd901fb9ba3f67a0b477e8ae0d78672a31598ce38693bf58ea6d8ac76b8cc2d": {
+      "address": "0x0b1F2B2F02090be7b2C81701Aa4F44D48F630E8B",
+      "txHash": "0x25664858223d29190bee34703403952f5bc35afc79103c2f521bc71cbc0cd07c",
+      "layout": {
+        "storage": [
+          {
+            "contract": "Initializable",
+            "label": "_initialized",
+            "type": "t_bool",
+            "src": "@openzeppelin\\contracts\\proxy\\utils\\Initializable.sol:23"
+          },
+          {
+            "contract": "Initializable",
+            "label": "_initializing",
+            "type": "t_bool",
+            "src": "@openzeppelin\\contracts\\proxy\\utils\\Initializable.sol:28"
+          },
+          {
+            "contract": "FixedRecurringSubscriptionsManagement",
+            "label": "__gap",
+            "type": "t_array(t_uint256)50_storage",
+            "src": "contracts\\billing-models\\fixed-recurring\\FixedRecurringSubscriptionsManagement.sol:27"
+          },
+          {
+            "contract": "FixedRecurringSubscriptionsManagement",
+            "label": "plansDB",
+            "type": "t_contract(IFixedRecurringPlansDatabase)8183",
+            "src": "contracts\\billing-models\\fixed-recurring\\FixedRecurringSubscriptionsManagement.sol:29"
+          },
+          {
+            "contract": "FixedRecurringSubscriptionsManagement",
+            "label": "subscriptionsDB",
+            "type": "t_contract(IFixedRecurringSubscriptionsDatabase)8260",
+            "src": "contracts\\billing-models\\fixed-recurring\\FixedRecurringSubscriptionsManagement.sol:30"
+          },
+          {
+            "contract": "FixedRecurringSubscriptionsManagement",
+            "label": "transfers",
+            "type": "t_contract(ITransfers)8506",
+            "src": "contracts\\billing-models\\fixed-recurring\\FixedRecurringSubscriptionsManagement.sol:31"
+          }
+        ],
+        "types": {
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]"
+          },
+          "t_uint256": {
+            "label": "uint256"
+          },
+          "t_contract(IFixedRecurringPlansDatabase)8183": {
+            "label": "contract IFixedRecurringPlansDatabase"
+          },
+          "t_contract(IFixedRecurringSubscriptionsDatabase)8260": {
+            "label": "contract IFixedRecurringSubscriptionsDatabase"
+          },
+          "t_contract(ITransfers)8506": {
+            "label": "contract ITransfers"
+          },
+          "t_bool": {
+            "label": "bool"
+          }
+        }
+      }
+    },
+    "e0f9d8b227a4fae5bbdec3745b7b1d48b2cd8b02c3f522c15cae0881b209f362": {
+      "address": "0xEDCc558f29E9DE2d2829d0Fb04aBf68F0F5942f7",
+      "txHash": "0xc4e15078381f5f81c68b6413e8e292bbe2f2ffc52946407110b4ef8211e88391",
+      "layout": {
+        "storage": [
+          {
+            "contract": "Database",
+            "label": "_uintStorage",
+            "type": "t_mapping(t_bytes32,t_uint256)",
+            "src": "contracts\\storage\\Database.sol:9"
+          },
+          {
+            "contract": "Database",
+            "label": "_stringStorage",
+            "type": "t_mapping(t_bytes32,t_string_storage)",
+            "src": "contracts\\storage\\Database.sol:10"
+          },
+          {
+            "contract": "Database",
+            "label": "_addressStorage",
+            "type": "t_mapping(t_bytes32,t_address)",
+            "src": "contracts\\storage\\Database.sol:11"
+          },
+          {
+            "contract": "Database",
+            "label": "_bytesStorage",
+            "type": "t_mapping(t_bytes32,t_bytes_storage)",
+            "src": "contracts\\storage\\Database.sol:12"
+          },
+          {
+            "contract": "Database",
+            "label": "_boolStorage",
+            "type": "t_mapping(t_bytes32,t_bool)",
+            "src": "contracts\\storage\\Database.sol:13"
+          },
+          {
+            "contract": "Database",
+            "label": "_intStorage",
+            "type": "t_mapping(t_bytes32,t_int256)",
+            "src": "contracts\\storage\\Database.sol:14"
+          },
+          {
+            "contract": "Database",
+            "label": "_bytes32Storage",
+            "type": "t_mapping(t_bytes32,t_bytes32)",
+            "src": "contracts\\storage\\Database.sol:15"
+          },
+          {
+            "contract": "Database",
+            "label": "_uintArrayStorage",
+            "type": "t_mapping(t_bytes32,t_array(t_uint256)dyn_storage)",
+            "src": "contracts\\storage\\Database.sol:17"
+          },
+          {
+            "contract": "Database",
+            "label": "_stringArrayStorage",
+            "type": "t_mapping(t_bytes32,t_array(t_string_storage)dyn_storage)",
+            "src": "contracts\\storage\\Database.sol:18"
+          },
+          {
+            "contract": "Database",
+            "label": "_addressArrayStorage",
+            "type": "t_mapping(t_bytes32,t_array(t_address)dyn_storage)",
+            "src": "contracts\\storage\\Database.sol:19"
+          },
+          {
+            "contract": "Database",
+            "label": "_bytesArrayStorage",
+            "type": "t_mapping(t_bytes32,t_array(t_bytes_storage)dyn_storage)",
+            "src": "contracts\\storage\\Database.sol:20"
+          },
+          {
+            "contract": "Database",
+            "label": "_boolArrayStorage",
+            "type": "t_mapping(t_bytes32,t_array(t_bool)dyn_storage)",
+            "src": "contracts\\storage\\Database.sol:21"
+          },
+          {
+            "contract": "Database",
+            "label": "_intArrayStorage",
+            "type": "t_mapping(t_bytes32,t_array(t_int256)dyn_storage)",
+            "src": "contracts\\storage\\Database.sol:22"
+          },
+          {
+            "contract": "Database",
+            "label": "_bytes32ArrayStorage",
+            "type": "t_mapping(t_bytes32,t_array(t_bytes32)dyn_storage)",
+            "src": "contracts\\storage\\Database.sol:23"
+          },
+          {
+            "contract": "AccessControl",
+            "label": "_initialized",
+            "type": "t_bool",
+            "src": "contracts\\access\\AccessControl.sol:26"
+          },
+          {
+            "contract": "AccessControl",
+            "label": "_roles",
+            "type": "t_mapping(t_bytes32,t_struct(RoleData)1206_storage)",
+            "src": "contracts\\access\\AccessControl.sol:27"
+          }
+        ],
+        "types": {
+          "t_bool": {
+            "label": "bool"
+          },
+          "t_mapping(t_bytes32,t_struct(RoleData)1206_storage)": {
+            "label": "mapping(bytes32 => struct AccessControl.RoleData)"
+          },
+          "t_bytes32": {
+            "label": "bytes32"
+          },
+          "t_struct(RoleData)1206_storage": {
+            "label": "struct AccessControl.RoleData",
+            "members": [
+              {
+                "label": "members",
+                "type": "t_mapping(t_address,t_bool)"
+              }
+            ]
+          },
+          "t_mapping(t_address,t_bool)": {
+            "label": "mapping(address => bool)"
+          },
+          "t_address": {
+            "label": "address"
+          },
+          "t_mapping(t_bytes32,t_uint256)": {
+            "label": "mapping(bytes32 => uint256)"
+          },
+          "t_uint256": {
+            "label": "uint256"
+          },
+          "t_mapping(t_bytes32,t_string_storage)": {
+            "label": "mapping(bytes32 => string)"
+          },
+          "t_string_storage": {
+            "label": "string"
+          },
+          "t_mapping(t_bytes32,t_address)": {
+            "label": "mapping(bytes32 => address)"
+          },
+          "t_mapping(t_bytes32,t_bytes_storage)": {
+            "label": "mapping(bytes32 => bytes)"
+          },
+          "t_bytes_storage": {
+            "label": "bytes"
+          },
+          "t_mapping(t_bytes32,t_bool)": {
+            "label": "mapping(bytes32 => bool)"
+          },
+          "t_mapping(t_bytes32,t_int256)": {
+            "label": "mapping(bytes32 => int256)"
+          },
+          "t_int256": {
+            "label": "int256"
+          },
+          "t_mapping(t_bytes32,t_bytes32)": {
+            "label": "mapping(bytes32 => bytes32)"
+          },
+          "t_mapping(t_bytes32,t_array(t_uint256)dyn_storage)": {
+            "label": "mapping(bytes32 => uint256[])"
+          },
+          "t_array(t_uint256)dyn_storage": {
+            "label": "uint256[]"
+          },
+          "t_mapping(t_bytes32,t_array(t_string_storage)dyn_storage)": {
+            "label": "mapping(bytes32 => string[])"
+          },
+          "t_array(t_string_storage)dyn_storage": {
+            "label": "string[]"
+          },
+          "t_mapping(t_bytes32,t_array(t_address)dyn_storage)": {
+            "label": "mapping(bytes32 => address[])"
+          },
+          "t_array(t_address)dyn_storage": {
+            "label": "address[]"
+          },
+          "t_mapping(t_bytes32,t_array(t_bytes_storage)dyn_storage)": {
+            "label": "mapping(bytes32 => bytes[])"
+          },
+          "t_array(t_bytes_storage)dyn_storage": {
+            "label": "bytes[]"
+          },
+          "t_mapping(t_bytes32,t_array(t_bool)dyn_storage)": {
+            "label": "mapping(bytes32 => bool[])"
+          },
+          "t_array(t_bool)dyn_storage": {
+            "label": "bool[]"
+          },
+          "t_mapping(t_bytes32,t_array(t_int256)dyn_storage)": {
+            "label": "mapping(bytes32 => int256[])"
+          },
+          "t_array(t_int256)dyn_storage": {
+            "label": "int256[]"
+          },
+          "t_mapping(t_bytes32,t_array(t_bytes32)dyn_storage)": {
+            "label": "mapping(bytes32 => bytes32[])"
+          },
+          "t_array(t_bytes32)dyn_storage": {
+            "label": "bytes32[]"
+          }
+        }
+      }
+    },
+    "a223fc791e33177d4b453cc1bda7a1067874d176994a68caf939dcb2b71150e2": {
+      "address": "0x4248fa0Eefe3d96985288507431308955f4198bd",
+      "txHash": "0x202a5eaa336e05328a189b0f2f5370cb992ff5c15bcba8af343ddee54b12738a",
+      "layout": {
+        "storage": [
+          {
+            "contract": "Database",
+            "label": "_uintStorage",
+            "type": "t_mapping(t_bytes32,t_uint256)",
+            "src": "contracts\\storage\\Database.sol:9"
+          },
+          {
+            "contract": "Database",
+            "label": "_stringStorage",
+            "type": "t_mapping(t_bytes32,t_string_storage)",
+            "src": "contracts\\storage\\Database.sol:10"
+          },
+          {
+            "contract": "Database",
+            "label": "_addressStorage",
+            "type": "t_mapping(t_bytes32,t_address)",
+            "src": "contracts\\storage\\Database.sol:11"
+          },
+          {
+            "contract": "Database",
+            "label": "_bytesStorage",
+            "type": "t_mapping(t_bytes32,t_bytes_storage)",
+            "src": "contracts\\storage\\Database.sol:12"
+          },
+          {
+            "contract": "Database",
+            "label": "_boolStorage",
+            "type": "t_mapping(t_bytes32,t_bool)",
+            "src": "contracts\\storage\\Database.sol:13"
+          },
+          {
+            "contract": "Database",
+            "label": "_intStorage",
+            "type": "t_mapping(t_bytes32,t_int256)",
+            "src": "contracts\\storage\\Database.sol:14"
+          },
+          {
+            "contract": "Database",
+            "label": "_bytes32Storage",
+            "type": "t_mapping(t_bytes32,t_bytes32)",
+            "src": "contracts\\storage\\Database.sol:15"
+          },
+          {
+            "contract": "Database",
+            "label": "_uintArrayStorage",
+            "type": "t_mapping(t_bytes32,t_array(t_uint256)dyn_storage)",
+            "src": "contracts\\storage\\Database.sol:17"
+          },
+          {
+            "contract": "Database",
+            "label": "_stringArrayStorage",
+            "type": "t_mapping(t_bytes32,t_array(t_string_storage)dyn_storage)",
+            "src": "contracts\\storage\\Database.sol:18"
+          },
+          {
+            "contract": "Database",
+            "label": "_addressArrayStorage",
+            "type": "t_mapping(t_bytes32,t_array(t_address)dyn_storage)",
+            "src": "contracts\\storage\\Database.sol:19"
+          },
+          {
+            "contract": "Database",
+            "label": "_bytesArrayStorage",
+            "type": "t_mapping(t_bytes32,t_array(t_bytes_storage)dyn_storage)",
+            "src": "contracts\\storage\\Database.sol:20"
+          },
+          {
+            "contract": "Database",
+            "label": "_boolArrayStorage",
+            "type": "t_mapping(t_bytes32,t_array(t_bool)dyn_storage)",
+            "src": "contracts\\storage\\Database.sol:21"
+          },
+          {
+            "contract": "Database",
+            "label": "_intArrayStorage",
+            "type": "t_mapping(t_bytes32,t_array(t_int256)dyn_storage)",
+            "src": "contracts\\storage\\Database.sol:22"
+          },
+          {
+            "contract": "Database",
+            "label": "_bytes32ArrayStorage",
+            "type": "t_mapping(t_bytes32,t_array(t_bytes32)dyn_storage)",
+            "src": "contracts\\storage\\Database.sol:23"
+          },
+          {
+            "contract": "AccessControl",
+            "label": "_initialized",
+            "type": "t_bool",
+            "src": "contracts\\access\\AccessControl.sol:26"
+          },
+          {
+            "contract": "AccessControl",
+            "label": "_roles",
+            "type": "t_mapping(t_bytes32,t_struct(RoleData)1206_storage)",
+            "src": "contracts\\access\\AccessControl.sol:27"
+          }
+        ],
+        "types": {
+          "t_bool": {
+            "label": "bool"
+          },
+          "t_mapping(t_bytes32,t_struct(RoleData)1206_storage)": {
+            "label": "mapping(bytes32 => struct AccessControl.RoleData)"
+          },
+          "t_bytes32": {
+            "label": "bytes32"
+          },
+          "t_struct(RoleData)1206_storage": {
+            "label": "struct AccessControl.RoleData",
+            "members": [
+              {
+                "label": "members",
+                "type": "t_mapping(t_address,t_bool)"
+              }
+            ]
+          },
+          "t_mapping(t_address,t_bool)": {
+            "label": "mapping(address => bool)"
+          },
+          "t_address": {
+            "label": "address"
+          },
+          "t_mapping(t_bytes32,t_uint256)": {
+            "label": "mapping(bytes32 => uint256)"
+          },
+          "t_uint256": {
+            "label": "uint256"
+          },
+          "t_mapping(t_bytes32,t_string_storage)": {
+            "label": "mapping(bytes32 => string)"
+          },
+          "t_string_storage": {
+            "label": "string"
+          },
+          "t_mapping(t_bytes32,t_address)": {
+            "label": "mapping(bytes32 => address)"
+          },
+          "t_mapping(t_bytes32,t_bytes_storage)": {
+            "label": "mapping(bytes32 => bytes)"
+          },
+          "t_bytes_storage": {
+            "label": "bytes"
+          },
+          "t_mapping(t_bytes32,t_bool)": {
+            "label": "mapping(bytes32 => bool)"
+          },
+          "t_mapping(t_bytes32,t_int256)": {
+            "label": "mapping(bytes32 => int256)"
+          },
+          "t_int256": {
+            "label": "int256"
+          },
+          "t_mapping(t_bytes32,t_bytes32)": {
+            "label": "mapping(bytes32 => bytes32)"
+          },
+          "t_mapping(t_bytes32,t_array(t_uint256)dyn_storage)": {
+            "label": "mapping(bytes32 => uint256[])"
+          },
+          "t_array(t_uint256)dyn_storage": {
+            "label": "uint256[]"
+          },
+          "t_mapping(t_bytes32,t_array(t_string_storage)dyn_storage)": {
+            "label": "mapping(bytes32 => string[])"
+          },
+          "t_array(t_string_storage)dyn_storage": {
+            "label": "string[]"
+          },
+          "t_mapping(t_bytes32,t_array(t_address)dyn_storage)": {
+            "label": "mapping(bytes32 => address[])"
+          },
+          "t_array(t_address)dyn_storage": {
+            "label": "address[]"
+          },
+          "t_mapping(t_bytes32,t_array(t_bytes_storage)dyn_storage)": {
+            "label": "mapping(bytes32 => bytes[])"
+          },
+          "t_array(t_bytes_storage)dyn_storage": {
+            "label": "bytes[]"
+          },
+          "t_mapping(t_bytes32,t_array(t_bool)dyn_storage)": {
+            "label": "mapping(bytes32 => bool[])"
+          },
+          "t_array(t_bool)dyn_storage": {
+            "label": "bool[]"
+          },
+          "t_mapping(t_bytes32,t_array(t_int256)dyn_storage)": {
+            "label": "mapping(bytes32 => int256[])"
+          },
+          "t_array(t_int256)dyn_storage": {
+            "label": "int256[]"
+          },
+          "t_mapping(t_bytes32,t_array(t_bytes32)dyn_storage)": {
+            "label": "mapping(bytes32 => bytes32[])"
+          },
+          "t_array(t_bytes32)dyn_storage": {
+            "label": "bytes32[]"
+          }
+        }
+      }
+    },
+    "ad038994bab60c8b8d62fe2ad533d94e39f358bfdb744e3c2737c78bc924373a": {
+      "address": "0x76028ceDDA4Df5A61512C6bc04Dbbd337b2951b2",
+      "txHash": "0xfd8dba4ace41d87d06471183154a2c4a99c4cfdf9a06f1870df13c2edf307358",
+      "layout": {
+        "storage": [
+          {
+            "contract": "Initializable",
+            "label": "_initialized",
+            "type": "t_bool",
+            "src": "@openzeppelin\\contracts\\proxy\\utils\\Initializable.sol:23"
+          },
+          {
+            "contract": "Initializable",
+            "label": "_initializing",
+            "type": "t_bool",
+            "src": "@openzeppelin\\contracts\\proxy\\utils\\Initializable.sol:28"
+          },
+          {
+            "contract": "VariableRecurringPlans",
+            "label": "__gap",
+            "type": "t_array(t_uint256)50_storage",
+            "src": "contracts\\billing-models\\variable-recurring\\VariableRecurringPlans.sol:26"
+          },
+          {
+            "contract": "VariableRecurringPlans",
+            "label": "plansDB",
+            "type": "t_contract(IVariableRecurringPlansDatabase)8601",
+            "src": "contracts\\billing-models\\variable-recurring\\VariableRecurringPlans.sol:28"
+          },
+          {
+            "contract": "VariableRecurringPlans",
+            "label": "tokensRegistry",
+            "type": "t_contract(ITokensRegistry)8484",
+            "src": "contracts\\billing-models\\variable-recurring\\VariableRecurringPlans.sol:29"
+          }
+        ],
+        "types": {
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]"
+          },
+          "t_uint256": {
+            "label": "uint256"
+          },
+          "t_contract(IVariableRecurringPlansDatabase)8601": {
+            "label": "contract IVariableRecurringPlansDatabase"
+          },
+          "t_contract(ITokensRegistry)8484": {
+            "label": "contract ITokensRegistry"
+          },
+          "t_bool": {
+            "label": "bool"
+          }
+        }
+      }
+    },
+    "b8062335b9832137bcebab50f55101c16a27168487b6106857adfba19e7a3f0c": {
+      "address": "0x944BED4bc61CB7d4418752681D0Ad2a3025Cf821",
+      "txHash": "0x2c508c3b8c94c343f6aff9d2c2cf3c1dd17d847d28f3fdf9267665a9c9cc2189",
+      "layout": {
+        "storage": [
+          {
+            "contract": "Initializable",
+            "label": "_initialized",
+            "type": "t_bool",
+            "src": "@openzeppelin\\contracts\\proxy\\utils\\Initializable.sol:23"
+          },
+          {
+            "contract": "Initializable",
+            "label": "_initializing",
+            "type": "t_bool",
+            "src": "@openzeppelin\\contracts\\proxy\\utils\\Initializable.sol:28"
+          },
+          {
+            "contract": "VariableRecurringSubscriptions",
+            "label": "__gap",
+            "type": "t_array(t_uint256)50_storage",
+            "src": "contracts\\billing-models\\variable-recurring\\VariableRecurringSubscriptions.sol:24"
+          },
+          {
+            "contract": "VariableRecurringSubscriptions",
+            "label": "plansDB",
+            "type": "t_contract(IVariableRecurringPlansDatabase)8601",
+            "src": "contracts\\billing-models\\variable-recurring\\VariableRecurringSubscriptions.sol:26"
+          },
+          {
+            "contract": "VariableRecurringSubscriptions",
+            "label": "subscriptionsDB",
+            "type": "t_contract(IVariableRecurringSubscriptionsDatabase)8692",
+            "src": "contracts\\billing-models\\variable-recurring\\VariableRecurringSubscriptions.sol:27"
+          }
+        ],
+        "types": {
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]"
+          },
+          "t_uint256": {
+            "label": "uint256"
+          },
+          "t_contract(IVariableRecurringPlansDatabase)8601": {
+            "label": "contract IVariableRecurringPlansDatabase"
+          },
+          "t_contract(IVariableRecurringSubscriptionsDatabase)8692": {
+            "label": "contract IVariableRecurringSubscriptionsDatabase"
+          },
+          "t_bool": {
+            "label": "bool"
+          }
+        }
+      }
+    },
+    "892a57a00da65fc3c143c341e962631dbc533a3f3e16a3eb2b0edf06226ada6f": {
+      "address": "0x906C35c9E8aF8C4fc1f4E60f4B47704A7d8ac393",
+      "txHash": "0xc914f8e499bf72a7721824f745c792a26f37e2fbb5db6e36f9abfa6747f14f32",
+      "layout": {
+        "storage": [
+          {
+            "contract": "Initializable",
+            "label": "_initialized",
+            "type": "t_bool",
+            "src": "@openzeppelin\\contracts\\proxy\\utils\\Initializable.sol:23"
+          },
+          {
+            "contract": "Initializable",
+            "label": "_initializing",
+            "type": "t_bool",
+            "src": "@openzeppelin\\contracts\\proxy\\utils\\Initializable.sol:28"
+          },
+          {
+            "contract": "VariableRecurringSubscriptionsManagement",
+            "label": "__gap",
+            "type": "t_array(t_uint256)50_storage",
+            "src": "contracts\\billing-models\\variable-recurring\\VariableRecurringSubscriptionsManagement.sol:30"
+          },
+          {
+            "contract": "VariableRecurringSubscriptionsManagement",
+            "label": "plansDB",
+            "type": "t_contract(IVariableRecurringPlansDatabase)8601",
+            "src": "contracts\\billing-models\\variable-recurring\\VariableRecurringSubscriptionsManagement.sol:32"
+          },
+          {
+            "contract": "VariableRecurringSubscriptionsManagement",
+            "label": "subscriptionsDB",
+            "type": "t_contract(IVariableRecurringSubscriptionsDatabase)8692",
+            "src": "contracts\\billing-models\\variable-recurring\\VariableRecurringSubscriptionsManagement.sol:33"
+          },
+          {
+            "contract": "VariableRecurringSubscriptionsManagement",
+            "label": "transfers",
+            "type": "t_contract(ITransfers)8506",
+            "src": "contracts\\billing-models\\variable-recurring\\VariableRecurringSubscriptionsManagement.sol:34"
+          }
+        ],
+        "types": {
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]"
+          },
+          "t_uint256": {
+            "label": "uint256"
+          },
+          "t_contract(IVariableRecurringPlansDatabase)8601": {
+            "label": "contract IVariableRecurringPlansDatabase"
+          },
+          "t_contract(IVariableRecurringSubscriptionsDatabase)8692": {
+            "label": "contract IVariableRecurringSubscriptionsDatabase"
+          },
+          "t_contract(ITransfers)8506": {
+            "label": "contract ITransfers"
+          },
+          "t_bool": {
+            "label": "bool"
+          }
+        }
+      }
+    },
+    "4f04e56915cb630c9df042f6cd4d0c68ff42efe340a2f4c0a9dc831808ffbec1": {
+      "address": "0x328F35EB94e85E8a6956d4eabd93342c605B8F77",
+      "txHash": "0x22fb8a1876a60012546646fedaa084381ac41a98fc9dba068f7645e7e4c0bb9a",
+      "layout": {
+        "storage": [
+          {
+            "contract": "Database",
+            "label": "_uintStorage",
+            "type": "t_mapping(t_bytes32,t_uint256)",
+            "src": "contracts\\storage\\Database.sol:9"
+          },
+          {
+            "contract": "Database",
+            "label": "_stringStorage",
+            "type": "t_mapping(t_bytes32,t_string_storage)",
+            "src": "contracts\\storage\\Database.sol:10"
+          },
+          {
+            "contract": "Database",
+            "label": "_addressStorage",
+            "type": "t_mapping(t_bytes32,t_address)",
+            "src": "contracts\\storage\\Database.sol:11"
+          },
+          {
+            "contract": "Database",
+            "label": "_bytesStorage",
+            "type": "t_mapping(t_bytes32,t_bytes_storage)",
+            "src": "contracts\\storage\\Database.sol:12"
+          },
+          {
+            "contract": "Database",
+            "label": "_boolStorage",
+            "type": "t_mapping(t_bytes32,t_bool)",
+            "src": "contracts\\storage\\Database.sol:13"
+          },
+          {
+            "contract": "Database",
+            "label": "_intStorage",
+            "type": "t_mapping(t_bytes32,t_int256)",
+            "src": "contracts\\storage\\Database.sol:14"
+          },
+          {
+            "contract": "Database",
+            "label": "_bytes32Storage",
+            "type": "t_mapping(t_bytes32,t_bytes32)",
+            "src": "contracts\\storage\\Database.sol:15"
+          },
+          {
+            "contract": "Database",
+            "label": "_uintArrayStorage",
+            "type": "t_mapping(t_bytes32,t_array(t_uint256)dyn_storage)",
+            "src": "contracts\\storage\\Database.sol:17"
+          },
+          {
+            "contract": "Database",
+            "label": "_stringArrayStorage",
+            "type": "t_mapping(t_bytes32,t_array(t_string_storage)dyn_storage)",
+            "src": "contracts\\storage\\Database.sol:18"
+          },
+          {
+            "contract": "Database",
+            "label": "_addressArrayStorage",
+            "type": "t_mapping(t_bytes32,t_array(t_address)dyn_storage)",
+            "src": "contracts\\storage\\Database.sol:19"
+          },
+          {
+            "contract": "Database",
+            "label": "_bytesArrayStorage",
+            "type": "t_mapping(t_bytes32,t_array(t_bytes_storage)dyn_storage)",
+            "src": "contracts\\storage\\Database.sol:20"
+          },
+          {
+            "contract": "Database",
+            "label": "_boolArrayStorage",
+            "type": "t_mapping(t_bytes32,t_array(t_bool)dyn_storage)",
+            "src": "contracts\\storage\\Database.sol:21"
+          },
+          {
+            "contract": "Database",
+            "label": "_intArrayStorage",
+            "type": "t_mapping(t_bytes32,t_array(t_int256)dyn_storage)",
+            "src": "contracts\\storage\\Database.sol:22"
+          },
+          {
+            "contract": "Database",
+            "label": "_bytes32ArrayStorage",
+            "type": "t_mapping(t_bytes32,t_array(t_bytes32)dyn_storage)",
+            "src": "contracts\\storage\\Database.sol:23"
+          },
+          {
+            "contract": "AccessControl",
+            "label": "_initialized",
+            "type": "t_bool",
+            "src": "contracts\\access\\AccessControl.sol:26"
+          },
+          {
+            "contract": "AccessControl",
+            "label": "_roles",
+            "type": "t_mapping(t_bytes32,t_struct(RoleData)1206_storage)",
+            "src": "contracts\\access\\AccessControl.sol:27"
+          }
+        ],
+        "types": {
+          "t_bool": {
+            "label": "bool"
+          },
+          "t_mapping(t_bytes32,t_struct(RoleData)1206_storage)": {
+            "label": "mapping(bytes32 => struct AccessControl.RoleData)"
+          },
+          "t_bytes32": {
+            "label": "bytes32"
+          },
+          "t_struct(RoleData)1206_storage": {
+            "label": "struct AccessControl.RoleData",
+            "members": [
+              {
+                "label": "members",
+                "type": "t_mapping(t_address,t_bool)"
+              }
+            ]
+          },
+          "t_mapping(t_address,t_bool)": {
+            "label": "mapping(address => bool)"
+          },
+          "t_address": {
+            "label": "address"
+          },
+          "t_mapping(t_bytes32,t_uint256)": {
+            "label": "mapping(bytes32 => uint256)"
+          },
+          "t_uint256": {
+            "label": "uint256"
+          },
+          "t_mapping(t_bytes32,t_string_storage)": {
+            "label": "mapping(bytes32 => string)"
+          },
+          "t_string_storage": {
+            "label": "string"
+          },
+          "t_mapping(t_bytes32,t_address)": {
+            "label": "mapping(bytes32 => address)"
+          },
+          "t_mapping(t_bytes32,t_bytes_storage)": {
+            "label": "mapping(bytes32 => bytes)"
+          },
+          "t_bytes_storage": {
+            "label": "bytes"
+          },
+          "t_mapping(t_bytes32,t_bool)": {
+            "label": "mapping(bytes32 => bool)"
+          },
+          "t_mapping(t_bytes32,t_int256)": {
+            "label": "mapping(bytes32 => int256)"
+          },
+          "t_int256": {
+            "label": "int256"
+          },
+          "t_mapping(t_bytes32,t_bytes32)": {
+            "label": "mapping(bytes32 => bytes32)"
+          },
+          "t_mapping(t_bytes32,t_array(t_uint256)dyn_storage)": {
+            "label": "mapping(bytes32 => uint256[])"
+          },
+          "t_array(t_uint256)dyn_storage": {
+            "label": "uint256[]"
+          },
+          "t_mapping(t_bytes32,t_array(t_string_storage)dyn_storage)": {
+            "label": "mapping(bytes32 => string[])"
+          },
+          "t_array(t_string_storage)dyn_storage": {
+            "label": "string[]"
+          },
+          "t_mapping(t_bytes32,t_array(t_address)dyn_storage)": {
+            "label": "mapping(bytes32 => address[])"
+          },
+          "t_array(t_address)dyn_storage": {
+            "label": "address[]"
+          },
+          "t_mapping(t_bytes32,t_array(t_bytes_storage)dyn_storage)": {
+            "label": "mapping(bytes32 => bytes[])"
+          },
+          "t_array(t_bytes_storage)dyn_storage": {
+            "label": "bytes[]"
+          },
+          "t_mapping(t_bytes32,t_array(t_bool)dyn_storage)": {
+            "label": "mapping(bytes32 => bool[])"
+          },
+          "t_array(t_bool)dyn_storage": {
+            "label": "bool[]"
+          },
+          "t_mapping(t_bytes32,t_array(t_int256)dyn_storage)": {
+            "label": "mapping(bytes32 => int256[])"
+          },
+          "t_array(t_int256)dyn_storage": {
+            "label": "int256[]"
+          },
+          "t_mapping(t_bytes32,t_array(t_bytes32)dyn_storage)": {
+            "label": "mapping(bytes32 => bytes32[])"
+          },
+          "t_array(t_bytes32)dyn_storage": {
+            "label": "bytes32[]"
+          }
+        }
+      }
+    },
+    "1e88595f4cc1d6da8b9cb2f9078d977b71f96af24136991e826520dab1bd8846": {
+      "address": "0x1C0211ED75A46338798080a2F026847A56F8bE61",
+      "txHash": "0x1a05f6a0c4c3023730c3c98858972404995d10ec9ca6da8af3c34df6fb3c61fc",
+      "layout": {
+        "storage": [
+          {
+            "contract": "Database",
+            "label": "_uintStorage",
+            "type": "t_mapping(t_bytes32,t_uint256)",
+            "src": "contracts\\storage\\Database.sol:9"
+          },
+          {
+            "contract": "Database",
+            "label": "_stringStorage",
+            "type": "t_mapping(t_bytes32,t_string_storage)",
+            "src": "contracts\\storage\\Database.sol:10"
+          },
+          {
+            "contract": "Database",
+            "label": "_addressStorage",
+            "type": "t_mapping(t_bytes32,t_address)",
+            "src": "contracts\\storage\\Database.sol:11"
+          },
+          {
+            "contract": "Database",
+            "label": "_bytesStorage",
+            "type": "t_mapping(t_bytes32,t_bytes_storage)",
+            "src": "contracts\\storage\\Database.sol:12"
+          },
+          {
+            "contract": "Database",
+            "label": "_boolStorage",
+            "type": "t_mapping(t_bytes32,t_bool)",
+            "src": "contracts\\storage\\Database.sol:13"
+          },
+          {
+            "contract": "Database",
+            "label": "_intStorage",
+            "type": "t_mapping(t_bytes32,t_int256)",
+            "src": "contracts\\storage\\Database.sol:14"
+          },
+          {
+            "contract": "Database",
+            "label": "_bytes32Storage",
+            "type": "t_mapping(t_bytes32,t_bytes32)",
+            "src": "contracts\\storage\\Database.sol:15"
+          },
+          {
+            "contract": "Database",
+            "label": "_uintArrayStorage",
+            "type": "t_mapping(t_bytes32,t_array(t_uint256)dyn_storage)",
+            "src": "contracts\\storage\\Database.sol:17"
+          },
+          {
+            "contract": "Database",
+            "label": "_stringArrayStorage",
+            "type": "t_mapping(t_bytes32,t_array(t_string_storage)dyn_storage)",
+            "src": "contracts\\storage\\Database.sol:18"
+          },
+          {
+            "contract": "Database",
+            "label": "_addressArrayStorage",
+            "type": "t_mapping(t_bytes32,t_array(t_address)dyn_storage)",
+            "src": "contracts\\storage\\Database.sol:19"
+          },
+          {
+            "contract": "Database",
+            "label": "_bytesArrayStorage",
+            "type": "t_mapping(t_bytes32,t_array(t_bytes_storage)dyn_storage)",
+            "src": "contracts\\storage\\Database.sol:20"
+          },
+          {
+            "contract": "Database",
+            "label": "_boolArrayStorage",
+            "type": "t_mapping(t_bytes32,t_array(t_bool)dyn_storage)",
+            "src": "contracts\\storage\\Database.sol:21"
+          },
+          {
+            "contract": "Database",
+            "label": "_intArrayStorage",
+            "type": "t_mapping(t_bytes32,t_array(t_int256)dyn_storage)",
+            "src": "contracts\\storage\\Database.sol:22"
+          },
+          {
+            "contract": "Database",
+            "label": "_bytes32ArrayStorage",
+            "type": "t_mapping(t_bytes32,t_array(t_bytes32)dyn_storage)",
+            "src": "contracts\\storage\\Database.sol:23"
+          },
+          {
+            "contract": "AccessControl",
+            "label": "_initialized",
+            "type": "t_bool",
+            "src": "contracts\\access\\AccessControl.sol:26"
+          },
+          {
+            "contract": "AccessControl",
+            "label": "_roles",
+            "type": "t_mapping(t_bytes32,t_struct(RoleData)1206_storage)",
+            "src": "contracts\\access\\AccessControl.sol:27"
+          }
+        ],
+        "types": {
+          "t_bool": {
+            "label": "bool"
+          },
+          "t_mapping(t_bytes32,t_struct(RoleData)1206_storage)": {
+            "label": "mapping(bytes32 => struct AccessControl.RoleData)"
+          },
+          "t_bytes32": {
+            "label": "bytes32"
+          },
+          "t_struct(RoleData)1206_storage": {
+            "label": "struct AccessControl.RoleData",
+            "members": [
+              {
+                "label": "members",
+                "type": "t_mapping(t_address,t_bool)"
+              }
+            ]
+          },
+          "t_mapping(t_address,t_bool)": {
+            "label": "mapping(address => bool)"
+          },
+          "t_address": {
+            "label": "address"
+          },
+          "t_mapping(t_bytes32,t_uint256)": {
+            "label": "mapping(bytes32 => uint256)"
+          },
+          "t_uint256": {
+            "label": "uint256"
+          },
+          "t_mapping(t_bytes32,t_string_storage)": {
+            "label": "mapping(bytes32 => string)"
+          },
+          "t_string_storage": {
+            "label": "string"
+          },
+          "t_mapping(t_bytes32,t_address)": {
+            "label": "mapping(bytes32 => address)"
+          },
+          "t_mapping(t_bytes32,t_bytes_storage)": {
+            "label": "mapping(bytes32 => bytes)"
+          },
+          "t_bytes_storage": {
+            "label": "bytes"
+          },
+          "t_mapping(t_bytes32,t_bool)": {
+            "label": "mapping(bytes32 => bool)"
+          },
+          "t_mapping(t_bytes32,t_int256)": {
+            "label": "mapping(bytes32 => int256)"
+          },
+          "t_int256": {
+            "label": "int256"
+          },
+          "t_mapping(t_bytes32,t_bytes32)": {
+            "label": "mapping(bytes32 => bytes32)"
+          },
+          "t_mapping(t_bytes32,t_array(t_uint256)dyn_storage)": {
+            "label": "mapping(bytes32 => uint256[])"
+          },
+          "t_array(t_uint256)dyn_storage": {
+            "label": "uint256[]"
+          },
+          "t_mapping(t_bytes32,t_array(t_string_storage)dyn_storage)": {
+            "label": "mapping(bytes32 => string[])"
+          },
+          "t_array(t_string_storage)dyn_storage": {
+            "label": "string[]"
+          },
+          "t_mapping(t_bytes32,t_array(t_address)dyn_storage)": {
+            "label": "mapping(bytes32 => address[])"
+          },
+          "t_array(t_address)dyn_storage": {
+            "label": "address[]"
+          },
+          "t_mapping(t_bytes32,t_array(t_bytes_storage)dyn_storage)": {
+            "label": "mapping(bytes32 => bytes[])"
+          },
+          "t_array(t_bytes_storage)dyn_storage": {
+            "label": "bytes[]"
+          },
+          "t_mapping(t_bytes32,t_array(t_bool)dyn_storage)": {
+            "label": "mapping(bytes32 => bool[])"
+          },
+          "t_array(t_bool)dyn_storage": {
+            "label": "bool[]"
+          },
+          "t_mapping(t_bytes32,t_array(t_int256)dyn_storage)": {
+            "label": "mapping(bytes32 => int256[])"
+          },
+          "t_array(t_int256)dyn_storage": {
+            "label": "int256[]"
+          },
+          "t_mapping(t_bytes32,t_array(t_bytes32)dyn_storage)": {
+            "label": "mapping(bytes32 => bytes32[])"
+          },
+          "t_array(t_bytes32)dyn_storage": {
+            "label": "bytes32[]"
+          }
+        }
+      }
+    },
+    "f9aa4069b8b3614dc9f9bc9f404e2a3655b3d6b3830dafd57fcfe9a06cdcfae1": {
+      "address": "0x301B92a73198a1A3f223DA5E444eb35bed73D96A",
+      "txHash": "0x0151bb79fb19188e4992e86fa80cd357bd9c5c9856b7a0b2b4203a82441272a0",
+      "layout": {
+        "storage": [
+          {
+            "contract": "Initializable",
+            "label": "_initialized",
+            "type": "t_bool",
+            "src": "@openzeppelin\\contracts\\proxy\\utils\\Initializable.sol:23"
+          },
+          {
+            "contract": "Initializable",
+            "label": "_initializing",
+            "type": "t_bool",
+            "src": "@openzeppelin\\contracts\\proxy\\utils\\Initializable.sol:28"
+          },
+          {
+            "contract": "OnDemandPlans",
+            "label": "__gap",
+            "type": "t_array(t_uint256)50_storage",
+            "src": "contracts\\billing-models\\on-demand\\OnDemandPlans.sol:36"
+          },
+          {
+            "contract": "OnDemandPlans",
+            "label": "plansDB",
+            "type": "t_contract(IOnDemandPlansDatabase)8355",
+            "src": "contracts\\billing-models\\on-demand\\OnDemandPlans.sol:38"
+          },
+          {
+            "contract": "OnDemandPlans",
+            "label": "tokensRegistry",
+            "type": "t_contract(ITokensRegistry)8484",
+            "src": "contracts\\billing-models\\on-demand\\OnDemandPlans.sol:39"
+          }
+        ],
+        "types": {
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]"
+          },
+          "t_uint256": {
+            "label": "uint256"
+          },
+          "t_contract(IOnDemandPlansDatabase)8355": {
+            "label": "contract IOnDemandPlansDatabase"
+          },
+          "t_contract(ITokensRegistry)8484": {
+            "label": "contract ITokensRegistry"
+          },
+          "t_bool": {
+            "label": "bool"
+          }
+        }
+      }
+    },
+    "7bdbeef76a220f58921c5c2fe3a5aa0fd928d9d20ada0c5d1da3ad4c523f597c": {
+      "address": "0x79f7bd0d542E5fe0C7af5529327897ca6b46B21b",
+      "txHash": "0xc7edf6eaa5b9a7f685b55a52e96b97e385832a46776d43ede41f204daea5781d",
+      "layout": {
+        "storage": [
+          {
+            "contract": "Initializable",
+            "label": "_initialized",
+            "type": "t_bool",
+            "src": "@openzeppelin\\contracts\\proxy\\utils\\Initializable.sol:23"
+          },
+          {
+            "contract": "Initializable",
+            "label": "_initializing",
+            "type": "t_bool",
+            "src": "@openzeppelin\\contracts\\proxy\\utils\\Initializable.sol:28"
+          },
+          {
+            "contract": "OnDemandSubscriptions",
+            "label": "__gap",
+            "type": "t_array(t_uint256)50_storage",
+            "src": "contracts\\billing-models\\on-demand\\OnDemandSubscriptions.sol:23"
+          },
+          {
+            "contract": "OnDemandSubscriptions",
+            "label": "plansDB",
+            "type": "t_contract(IOnDemandPlansDatabase)8355",
+            "src": "contracts\\billing-models\\on-demand\\OnDemandSubscriptions.sol:25"
+          },
+          {
+            "contract": "OnDemandSubscriptions",
+            "label": "subscriptionsDB",
+            "type": "t_contract(IOnDemandSubscriptionsDatabase)8460",
+            "src": "contracts\\billing-models\\on-demand\\OnDemandSubscriptions.sol:26"
+          }
+        ],
+        "types": {
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]"
+          },
+          "t_uint256": {
+            "label": "uint256"
+          },
+          "t_contract(IOnDemandPlansDatabase)8355": {
+            "label": "contract IOnDemandPlansDatabase"
+          },
+          "t_contract(IOnDemandSubscriptionsDatabase)8460": {
+            "label": "contract IOnDemandSubscriptionsDatabase"
+          },
+          "t_bool": {
+            "label": "bool"
+          }
+        }
+      }
+    },
+    "00cba55a6af99b65c7d3badc4dd4a613f55cc502fc97508bae1d79339970a44c": {
+      "address": "0x4842DB8C86bAa0E276d9899Dce123c32B2a62224",
+      "txHash": "0xecc155d87e8740dd05d971fb003bf6adcead33d638225d4e833d9179a3adfe18",
+      "layout": {
+        "storage": [
+          {
+            "contract": "Initializable",
+            "label": "_initialized",
+            "type": "t_bool",
+            "src": "@openzeppelin\\contracts\\proxy\\utils\\Initializable.sol:23"
+          },
+          {
+            "contract": "Initializable",
+            "label": "_initializing",
+            "type": "t_bool",
+            "src": "@openzeppelin\\contracts\\proxy\\utils\\Initializable.sol:28"
+          },
+          {
+            "contract": "OnDemandSubscriptionsManagement",
+            "label": "__gap",
+            "type": "t_array(t_uint256)50_storage",
+            "src": "contracts\\billing-models\\on-demand\\OnDemandSubscriptionsManagement.sol:27"
+          },
+          {
+            "contract": "OnDemandSubscriptionsManagement",
+            "label": "plansDB",
+            "type": "t_contract(IOnDemandPlansDatabase)8355",
+            "src": "contracts\\billing-models\\on-demand\\OnDemandSubscriptionsManagement.sol:29"
+          },
+          {
+            "contract": "OnDemandSubscriptionsManagement",
+            "label": "subscriptionsDB",
+            "type": "t_contract(IOnDemandSubscriptionsDatabase)8460",
+            "src": "contracts\\billing-models\\on-demand\\OnDemandSubscriptionsManagement.sol:30"
+          },
+          {
+            "contract": "OnDemandSubscriptionsManagement",
+            "label": "transfers",
+            "type": "t_contract(ITransfers)8506",
+            "src": "contracts\\billing-models\\on-demand\\OnDemandSubscriptionsManagement.sol:31"
+          }
+        ],
+        "types": {
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]"
+          },
+          "t_uint256": {
+            "label": "uint256"
+          },
+          "t_contract(IOnDemandPlansDatabase)8355": {
+            "label": "contract IOnDemandPlansDatabase"
+          },
+          "t_contract(IOnDemandSubscriptionsDatabase)8460": {
+            "label": "contract IOnDemandSubscriptionsDatabase"
+          },
+          "t_contract(ITransfers)8506": {
+            "label": "contract ITransfers"
+          },
+          "t_bool": {
+            "label": "bool"
+          }
+        }
+      }
+    }
+  },
+  "admin": {
+    "address": "0xF8750F629ACE15BC09d532Fa552da7f46ab61417",
+    "txHash": "0xe818b7bba20df4c701c853e716b3fb3288396f7b056578bc4f2afa50b0d515ce"
+  }
+}
