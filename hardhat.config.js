@@ -1,6 +1,7 @@
 require('@nomiclabs/hardhat-ethers');
 require('@nomiclabs/hardhat-truffle5');
 require('@nomiclabs/hardhat-web3');
+require('@nomiclabs/hardhat-etherscan');
 require('@openzeppelin/hardhat-upgrades');
 require('hardhat-deploy');
 require('hardhat-abi-exporter');
@@ -43,5 +44,8 @@ module.exports = {
       bsc: '0xD8BEC82Dd5C0FE69f012de6660C4a44d63b786BD',
       private: '0xe17C7A6ae970437e36785a77899D234Bc9eB1f39'
     }
+  },
+  etherscan: {
+    apiKey: process.env.BSCSCAN_KEY
   }
 };
